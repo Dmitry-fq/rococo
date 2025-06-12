@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.Size;
 import ru.rococo.config.RococoGatewayServiceConfig;
+import ru.rococo.grpc.UserResponse;
 
 import java.util.UUID;
 
@@ -26,7 +27,13 @@ public record UserJson(
         String avatar
 ) {
 
-    public @Nonnull UserJson addUsername(@Nonnull String username) {
-        return new UserJson(id, username, firstname, lastname, avatar);
+    public static @Nonnull UserJson fromUserResponse(@Nonnull UserResponse userResponse) {
+        return new UserJson(
+                UUID.fromString(userResponse.getId()),
+                userResponse.getUsername(),
+                userResponse.getFirstname(),
+                userResponse.getLastname(),
+                userResponse.getAvatar()
+        );
     }
 }

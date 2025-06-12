@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+package ru.grpc.rococo;
+
+option java_multiple_files = true;
+option java_package = "ru.rococo.grpc";
+option java_outer_classname = "RococoUserdataProto";
+
+service RococoUserdataService {
+  rpc GetUser (UserRequest) returns (UserResponse) {}
+  rpc UpdateUser (UserRequest) returns (UserResponse) {}
+}
+
+message UserRequest {
+  string username = 1;
+  string firstname = 2;
+  string lastname = 3;
+  string avatar = 4;
+}
+
+message UserResponse {
+  string id = 1;
+  string username = 2;
+  string firstname = 3;
+  string lastname = 4;
+  string avatar = 5;
+}
