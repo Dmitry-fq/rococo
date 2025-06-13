@@ -3,7 +3,7 @@
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)
 
-docker run --name rococo-all -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret -e CREATE_DATABASES=rococo-auth -v pgdata:/var/lib/postgresql/data -v C:\\postgres\\init-database.sh:/docker-entrypoint-initdb.d/init-database.sh -d postgres:15.1 --max_prepared_transactions=100
+docker run --name rococo-all -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret -e CREATE_DATABASES=rococo-auth,rococo-userdata,rococo-artist,rococo-painting,rococo-geo,rococo-museum -v pgdata:/var/lib/postgresql/data -v C:\\Users\\Dmitry\\IdeaProjects\\rococo\\postgres\\script\\init-database.sh:/docker-entrypoint-initdb.d/init-database.sh -d postgres:15.1 --max_prepared_transactions=100
 docker run --name=zookeeper -e ZOOKEEPER_CLIENT_PORT=2181 -p 2181:2181 -d confluentinc/cp-zookeeper:7.3.2
 docker run --name=kafka -e KAFKA_BROKER_ID=1 \
 -e KAFKA_ZOOKEEPER_CONNECT=$(docker inspect zookeeper --format='{{ .NetworkSettings.IPAddress }}'):2181 \
