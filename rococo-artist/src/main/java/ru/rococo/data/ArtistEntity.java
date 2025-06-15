@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import ru.rococo.grpc.ArtistResponse;
+import ru.rococo.grpc.Artist;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -34,12 +34,12 @@ public class ArtistEntity implements Serializable {
     @Column(name = "photo", columnDefinition = "bytea")
     private byte[] photo;
 
-    public ArtistResponse toArtistResponse() {
-        return ArtistResponse.newBuilder()
-                             .setId(id.toString())
-                             .setName(name)
-                             .setBiography(biography != null ? biography : "")
-                             .setPhoto(photo != null ? new String(photo, StandardCharsets.UTF_8) : "")
-                             .build();
+    public Artist toArtist() {
+        return Artist.newBuilder()
+                     .setId(id.toString())
+                     .setName(name)
+                     .setBiography(biography != null ? biography : "")
+                     .setPhoto(photo != null ? new String(photo, StandardCharsets.UTF_8) : "")
+                     .build();
     }
 }

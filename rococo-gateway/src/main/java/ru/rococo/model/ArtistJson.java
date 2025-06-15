@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.Size;
 import ru.rococo.config.RococoGatewayServiceConfig;
-import ru.rococo.grpc.ArtistResponse;
+import ru.rococo.grpc.Artist;
 
 import java.util.UUID;
 
@@ -25,12 +25,12 @@ public record ArtistJson(
         @Size(max = RococoGatewayServiceConfig.ONE_MB)
         String photo
 ) {
-    public static @Nonnull ArtistJson fromArtistResponse(@Nonnull ArtistResponse artistResponse) {
+    public static @Nonnull ArtistJson fromArtist(@Nonnull Artist artist) {
         return new ArtistJson(
-                UUID.fromString(artistResponse.getId()),
-                artistResponse.getName(),
-                artistResponse.getBiography(),
-                artistResponse.getPhoto()
+                UUID.fromString(artist.getId()),
+                artist.getName(),
+                artist.getBiography(),
+                artist.getPhoto()
         );
     }
 }

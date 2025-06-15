@@ -12,9 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import ru.rococo.grpc.AllArtistsRequest;
-import ru.rococo.grpc.ArtistListResponse;
-import ru.rococo.grpc.ArtistRequest;
-import ru.rococo.grpc.ArtistResponse;
+import ru.rococo.grpc.Artist;
+import ru.rococo.grpc.ArtistsResponse;
 import ru.rococo.grpc.RococoArtistServiceGrpc;
 import ru.rococo.model.ArtistJson;
 
@@ -30,12 +29,12 @@ public class ArtistClient {
 
     public @Nonnull ArtistJson getArtist(String id) {
         try {
-            ArtistResponse artistResponse = rococoArtistServiceStub.getArtist(
-                    ArtistRequest.newBuilder()
-                                 .setId(id)
-                                 .build()
+            Artist artistResponse = rococoArtistServiceStub.getArtist(
+                    Artist.newBuilder()
+                          .setId(id)
+                          .build()
             );
-            return ArtistJson.fromArtistResponse(artistResponse);
+            return ArtistJson.fromArtist(artistResponse);
 
         } catch (StatusRuntimeException e) {
 
@@ -47,7 +46,7 @@ public class ArtistClient {
 
     public Page<ArtistJson> allArtists(String name, @Nonnull Pageable pageable) {
         try {
-            ArtistListResponse artistListResponse = rococoArtistServiceStub.allArtists(
+            ArtistsResponse artistListResponse = rococoArtistServiceStub.allArtists(
                     AllArtistsRequest.newBuilder()
                                      .setName(name)
                                      .setPageable(
@@ -61,7 +60,7 @@ public class ArtistClient {
             );
 
             List<ArtistJson> artistJsonList = artistListResponse.getArtistListList().stream()
-                                                                .map(ArtistJson::fromArtistResponse)
+                                                                .map(ArtistJson::fromArtist)
                                                                 .toList();
 
             return new PageImpl<>(artistJsonList, pageable, artistListResponse.getTotalCount());
@@ -74,16 +73,16 @@ public class ArtistClient {
 
     public @Nonnull ArtistJson updateArtist(ArtistJson artistJson) {
         try {
-            ArtistResponse artistResponse = rococoArtistServiceStub.updateArtist(
-                    ArtistRequest.newBuilder()
-                                 .setId(String.valueOf(artistJson.id()))
-                                 .setName(artistJson.name())
-                                 .setBiography(artistJson.biography())
-                                 .setPhoto(artistJson.photo())
-                                 .build()
+            Artist artistResponse = rococoArtistServiceStub.updateArtist(
+                    Artist.newBuilder()
+                          .setId(String.valueOf(artistJson.id()))
+                          .setName(artistJson.name())
+                          .setBiography(artistJson.biography())
+                          .setPhoto(artistJson.photo())
+                          .build()
             );
 
-            return ArtistJson.fromArtistResponse(artistResponse);
+            return ArtistJson.fromArtist(artistResponse);
 
         } catch (StatusRuntimeException e) {
             LOG.error("### Error while calling gRPC server ", e);
@@ -93,15 +92,15 @@ public class ArtistClient {
 
     public @Nonnull ArtistJson addArtist(ArtistJson artistJson) {
         try {
-            ArtistResponse artistResponse = rococoArtistServiceStub.addArtist(
-                    ArtistRequest.newBuilder()
-                                 .setName(artistJson.name())
-                                 .setBiography(artistJson.biography())
-                                 .setPhoto(artistJson.photo())
-                                 .build()
+            Artist artistResponse = rococoArtistServiceStub.addArtist(
+                    Artist.newBuilder()
+                          .setName(artistJson.name())
+                          .setBiography(artistJson.biography())
+                          .setPhoto(artistJson.photo())
+                          .build()
             );
 
-            return ArtistJson.fromArtistResponse(artistResponse);
+            return ArtistJson.fromArtist(artistResponse);
 
         } catch (StatusRuntimeException e) {
             LOG.error("### Error while calling gRPC server ", e);

@@ -8,9 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.rococo.data.ArtistEntity;
 import ru.rococo.data.repository.ArtistRepository;
 import ru.rococo.grpc.AllArtistsRequest;
-import ru.rococo.grpc.ArtistListResponse;
-import ru.rococo.grpc.ArtistRequest;
-import ru.rococo.grpc.ArtistResponse;
+import ru.rococo.grpc.Artist;
+import ru.rococo.grpc.ArtistsResponse;
 import ru.rococo.grpc.RococoArtistServiceGrpc;
 
 import java.nio.charset.StandardCharsets;
@@ -33,25 +32,25 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
     }
 
     @Override
-    public void getArtist(ArtistRequest artistRequest, StreamObserver<ArtistResponse> responseObserver) {
+    public void getArtist(Artist artistRequest, StreamObserver<Artist> responseObserver) {
         String artistId = artistRequest.getId();
-        ArtistResponse response = artistRepository.findById(UUID.fromString(artistId))
-                                                  .map(ArtistEntity::toArtistResponse)
-                                                  .orElseThrow(() -> new RuntimeException(
-                                                          "Artist with id: `" + artistId + "` not found")
-                                                  );
+        Artist response = artistRepository.findById(UUID.fromString(artistId))
+                                          .map(ArtistEntity::toArtist)
+                                          .orElseThrow(() -> new RuntimeException(
+                                                  "Artist with id: `" + artistId + "` not found")
+                                          );
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void allArtists(AllArtistsRequest request, StreamObserver<ArtistListResponse> responseObserver) {
-        ArtistListResponse response = ArtistListResponse.newBuilder().addAllArtistList(
+    public void allArtists(AllArtistsRequest request, StreamObserver<ArtistsResponse> responseObserver) {
+        ArtistsResponse response = ArtistsResponse.newBuilder().addAllArtistList(
                 artistRepository.findAll().stream()
                                 .filter(artistEntity -> request.getName().isBlank() ||
                                         artistEntity.getName().contains(request.getName()))
-                                .map(ArtistEntity::toArtistResponse)
+                                .map(ArtistEntity::toArtist)
                                 .toList()
         ).build();
 
@@ -60,7 +59,7 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
     }
 
     @Override
-    public void updateArtist(ArtistRequest artistRequest, StreamObserver<ArtistResponse> responseObserver) {
+    public void updateArtist(Artist artistRequest, StreamObserver<Artist> responseObserver) {
         String artistId = artistRequest.getId();
         ArtistEntity artistEntity = artistRepository.findById(UUID.fromString(artistId))
                                                     .orElseThrow(() -> new RuntimeException(
@@ -75,12 +74,12 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
 
         artistRepository.save(artistEntity);
 
-        responseObserver.onNext(artistEntity.toArtistResponse());
+        responseObserver.onNext(artistEntity.toArtist());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void addArtist(ArtistRequest artistRequest, StreamObserver<ArtistResponse> responseObserver) {
+    public void addArtist(Artist artistRequest, StreamObserver<Artist> responseObserver) {
         ArtistEntity artistEntity = new ArtistEntity();
         artistEntity.setName(artistRequest.getName());
         artistEntity.setBiography(artistRequest.getBiography());
@@ -90,7 +89,7 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
 
         artistRepository.save(artistEntity);
 
-        responseObserver.onNext(artistEntity.toArtistResponse());
+        responseObserver.onNext(artistEntity.toArtist());
         responseObserver.onCompleted();
     }
 }
