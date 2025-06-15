@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "rococo-common.proto";
+
 package ru.grpc.rococo;
 
 option java_multiple_files = true;
@@ -35,9 +37,4 @@ message ArtistListResponse {
 message AllArtistsRequest {
   string name = 1;
   Pageable pageable = 2;
-}
-
-message Pageable {
-  int32 size = 1;
-  int32 page = 2;
 }

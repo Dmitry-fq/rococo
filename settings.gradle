@@ -4,4 +4,6 @@ include 'rococo-auth'
 include 'rococo-userdata'
 include 'rococo-grpc-common'
 include 'rococo-artist'
+include 'rococo-geo'
+include 'rococo-museum'
 

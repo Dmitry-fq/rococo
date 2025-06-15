@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "rococo-common.proto";
+
+package ru.grpc.rococo;
+
+option java_multiple_files = true;
+option java_package = "ru.rococo.grpc";
+option java_outer_classname = "RococoGeoProto";
+
+service RococoGeoService {
+  rpc AllCountries (Pageable) returns (AllCountriesResponse) {}
+}
+
+message AllCountriesResponse {
+  repeated Country countries = 1;
+  int32 total_count = 2;
+}
+
+message Country {
+  string id = 1;
+  string name = 2;
+}

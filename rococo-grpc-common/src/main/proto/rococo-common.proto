@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ru.grpc.rococo;
+
+option java_multiple_files = true;
+option java_package = "ru.rococo.grpc";
+option java_outer_classname = "RococoCommonProto";
+
+message Pageable {
+  int32 size = 1;
+  int32 page = 2;
+}
