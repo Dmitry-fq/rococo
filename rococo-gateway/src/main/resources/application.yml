@@ -40,6 +40,12 @@ grpc:
     geoClient:
       address: 'static://localhost:8096'
       negotiationType: PLAINTEXT
+    museumClient:
+      address: 'static://localhost:8098'
+      negotiationType: PLAINTEXT
+    paintingClient:
+      address: 'static://localhost:8100'
+      negotiationType: PLAINTEXT
 
 rococo-front:
   base-uri: 'http://127.0.0.1:3000'
@@ -49,6 +55,10 @@ rococo-artist:
   base-uri: 'http://127.0.0.1:8093'
 rococo-geo:
   base-uri: 'http://127.0.0.1:8095'
+rococo-museum:
+  base-uri: 'http://127.0.0.1:8097'
+rococo-painting:
+  base-uri: 'http://127.0.0.1:8099'
 
 ---
 spring:

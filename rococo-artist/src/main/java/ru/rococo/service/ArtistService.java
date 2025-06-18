@@ -27,10 +27,6 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
         this.artistRepository = artistRepository;
     }
 
-    public static boolean isPhotoString(String photo) {
-        return photo != null && photo.startsWith("data:image");
-    }
-
     @Override
     public void getArtist(Artist artistRequest, StreamObserver<Artist> responseObserver) {
         String artistId = artistRequest.getId();
@@ -47,9 +43,7 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
     @Override
     public void allArtists(AllArtistsRequest request, StreamObserver<ArtistsResponse> responseObserver) {
         ArtistsResponse response = ArtistsResponse.newBuilder().addAllArtistList(
-                artistRepository.findAll().stream()
-                                .filter(artistEntity -> request.getName().isBlank() ||
-                                        artistEntity.getName().contains(request.getName()))
+                artistRepository.getArtistEntitiesByNameContainingIgnoreCase(request.getName()).stream()
                                 .map(ArtistEntity::toArtist)
                                 .toList()
         ).build();
@@ -65,12 +59,7 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
                                                     .orElseThrow(() -> new RuntimeException(
                                                             "Artist with id: `" + artistId + "` not found")
                                                     );
-        artistEntity.setName(artistRequest.getName());
-        artistEntity.setBiography(artistRequest.getBiography());
-        String photo = artistRequest.getPhoto();
-        if (isPhotoString(photo)) {
-            artistEntity.setPhoto(photo.getBytes(StandardCharsets.UTF_8));
-        }
+        updateArtistEntityFromRequest(artistEntity, artistRequest);
 
         artistRepository.save(artistEntity);
 
@@ -81,15 +70,23 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
     @Override
     public void addArtist(Artist artistRequest, StreamObserver<Artist> responseObserver) {
         ArtistEntity artistEntity = new ArtistEntity();
-        artistEntity.setName(artistRequest.getName());
-        artistEntity.setBiography(artistRequest.getBiography());
-        if (isPhotoString(artistRequest.getPhoto())) {
-            artistEntity.setPhoto(artistRequest.getPhoto().getBytes(StandardCharsets.UTF_8));
-        }
+        updateArtistEntityFromRequest(artistEntity, artistRequest);
 
         artistRepository.save(artistEntity);
 
         responseObserver.onNext(artistEntity.toArtist());
         responseObserver.onCompleted();
+    }
+
+    private void updateArtistEntityFromRequest(ArtistEntity artistEntity, Artist artistRequest) {
+        artistEntity.setName(artistRequest.getName());
+        artistEntity.setBiography(artistRequest.getBiography());
+        if (isPhotoString(artistRequest.getPhoto())) {
+            artistEntity.setPhoto(artistRequest.getPhoto().getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    private boolean isPhotoString(String photo) {
+        return photo != null && photo.startsWith("data:image");
     }
 }

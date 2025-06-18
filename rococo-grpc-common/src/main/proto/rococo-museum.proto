@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "rococo-common.proto";
+import "rococo-geo.proto";
+
+package ru.grpc.rococo;
+
+option java_multiple_files = true;
+option java_package = "ru.rococo.grpc";
+option java_outer_classname = "RococoMuseumProto";
+
+service RococoMuseumService {
+  rpc getMuseum (Museum) returns (Museum) {}
+  rpc AllMuseums (AllMuseumsRequest) returns (AllMuseumsResponse) {}
+  rpc AddMuseum (Museum) returns (Museum) {}
+  rpc UpdateMuseum (Museum) returns (Museum) {}
+}
+
+message AllMuseumsRequest {
+  string title = 1;
+  Pageable pageable = 2;
+}
+
+message AllMuseumsResponse {
+  repeated Museum museums = 1;
+  int32 total_count = 2;
+}
+
+message Museum {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string photo = 4;
+  Geo geo = 5;
+}

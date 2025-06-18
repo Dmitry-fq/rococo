@@ -9,12 +9,18 @@ option java_package = "ru.rococo.grpc";
 option java_outer_classname = "RococoGeoProto";
 
 service RococoGeoService {
+  rpc GetCountry (Country) returns (Country) {}
   rpc AllCountries (Pageable) returns (AllCountriesResponse) {}
 }
 
 message AllCountriesResponse {
   repeated Country countries = 1;
   int32 total_count = 2;
+}
+
+message Geo {
+  Country country = 1;
+  string city = 2;
 }
 
 message Country {
