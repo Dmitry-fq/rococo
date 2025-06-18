@@ -14,7 +14,7 @@ public record CountryJson(
         @JsonProperty("name")
         String name
 ) {
-    public static @Nonnull CountryJson fromCountryResponse(@Nonnull Country country) {
+    public static @Nonnull CountryJson fromCountry(@Nonnull Country country) {
         return new CountryJson(
                 UUID.fromString(country.getId()),
                 country.getName()

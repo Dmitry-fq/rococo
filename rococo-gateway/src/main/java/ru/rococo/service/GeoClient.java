@@ -36,7 +36,7 @@ public class GeoClient {
             );
 
             List<CountryJson> countryList = allCountriesResponse.getCountriesList().stream()
-                                                                .map(CountryJson::fromCountryResponse)
+                                                                .map(CountryJson::fromCountry)
                                                                 .toList();
 
             return new PageImpl<>(countryList, pageable, allCountriesResponse.getTotalCount());

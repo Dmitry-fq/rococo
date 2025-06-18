@@ -5,6 +5,8 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.rococo.data.ArtistEntity;
 import ru.rococo.data.repository.ArtistRepository;
 import ru.rococo.grpc.AllArtistsRequest;
@@ -42,8 +44,9 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
 
     @Override
     public void allArtists(AllArtistsRequest request, StreamObserver<ArtistsResponse> responseObserver) {
+        Pageable pageable = PageRequest.of(request.getPageable().getPage(), request.getPageable().getSize());
         ArtistsResponse response = ArtistsResponse.newBuilder().addAllArtistList(
-                artistRepository.getArtistEntitiesByNameContainingIgnoreCase(request.getName()).stream()
+                artistRepository.findAllByNameContainingIgnoreCase(request.getName(), pageable).stream()
                                 .map(ArtistEntity::toArtist)
                                 .toList()
         ).build();
