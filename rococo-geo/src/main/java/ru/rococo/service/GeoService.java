@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.rococo.data.CountryEntity;
 import ru.rococo.data.repository.CountryRepository;
+import ru.rococo.ex.CountryNotFoundException;
 import ru.rococo.grpc.AllCountriesResponse;
 import ru.rococo.grpc.Country;
 import ru.rococo.grpc.Pageable;
@@ -31,7 +32,7 @@ public class GeoService extends RococoGeoServiceGrpc.RococoGeoServiceImplBase {
         String countryId = countryRequest.getId();
         Country response = countryRepository.findById(UUID.fromString(countryId))
                                             .map(CountryEntity::toCountry)
-                                            .orElseThrow(() -> new RuntimeException(
+                                            .orElseThrow(() -> new CountryNotFoundException(
                                                     "Country with id: `" + countryId + "` not found")
                                             );
 

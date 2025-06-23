@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.rococo.data.ArtistEntity;
 import ru.rococo.data.repository.ArtistRepository;
+import ru.rococo.ex.ArtistNotFoundException;
 import ru.rococo.grpc.AllArtistsRequest;
 import ru.rococo.grpc.Artist;
 import ru.rococo.grpc.ArtistsResponse;
@@ -34,7 +35,7 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
         String artistId = artistRequest.getId();
         Artist response = artistRepository.findById(UUID.fromString(artistId))
                                           .map(ArtistEntity::toArtist)
-                                          .orElseThrow(() -> new RuntimeException(
+                                          .orElseThrow(() -> new ArtistNotFoundException(
                                                   "Artist with id: `" + artistId + "` not found")
                                           );
 

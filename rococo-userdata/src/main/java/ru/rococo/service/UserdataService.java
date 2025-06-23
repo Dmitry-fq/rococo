@@ -11,6 +11,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rococo.data.UserEntity;
 import ru.rococo.data.repository.UserdataRepository;
+import ru.rococo.ex.UserdataNotFoundException;
 import ru.rococo.grpc.RococoUserdataServiceGrpc;
 import ru.rococo.grpc.UserRequest;
 import ru.rococo.grpc.UserResponse;
@@ -61,7 +62,7 @@ public class UserdataService extends RococoUserdataServiceGrpc.RococoUserdataSer
         String username = userRequest.getUsername();
         UserResponse response = userdataRepository.findByUsername(username)
                                                   .map(UserEntity::toUserResponse)
-                                                  .orElseThrow(() -> new RuntimeException(
+                                                  .orElseThrow(() -> new UserdataNotFoundException(
                                                           "Username: `" + username + "` not found")
                                                   );
 
@@ -73,7 +74,7 @@ public class UserdataService extends RococoUserdataServiceGrpc.RococoUserdataSer
     public void updateUser(UserRequest userRequest, StreamObserver<UserResponse> responseObserver) {
         String username = userRequest.getUsername();
         UserEntity userEntity = userdataRepository.findByUsername(username)
-                                                  .orElseThrow(() -> new RuntimeException(
+                                                  .orElseThrow(() -> new UserdataNotFoundException(
                                                           "Username: `" + username + "` not found")
                                                   );
         userEntity.setFirstname(userRequest.getFirstname());

@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.rococo.data.PaintingEntity;
 import ru.rococo.data.repository.PaintingRepository;
+import ru.rococo.ex.PaintingNotFoundException;
 import ru.rococo.grpc.AllPaintingsByAuthorIdRequest;
 import ru.rococo.grpc.AllPaintingsRequest;
 import ru.rococo.grpc.AllPaintingsResponse;
@@ -47,7 +48,7 @@ public class PaintingService extends RococoPaintingServiceGrpc.RococoPaintingSer
                                                                       getMuseumById(String.valueOf(paintingEntity.getMuseumId()))
                                                               )
                                                       )
-                                                      .orElseThrow(() -> new RuntimeException(
+                                                      .orElseThrow(() -> new PaintingNotFoundException(
                                                               "Painting with id: `" + paintingId + "` not found")
                                                       );
 
@@ -93,7 +94,7 @@ public class PaintingService extends RococoPaintingServiceGrpc.RococoPaintingSer
     public void updatePainting(Painting paintingRequest, StreamObserver<Painting> responseObserver) {
         String paintingId = paintingRequest.getId();
         PaintingEntity paintingEntity = paintingRepository.findById(UUID.fromString(paintingId))
-                                                          .orElseThrow(() -> new RuntimeException(
+                                                          .orElseThrow(() -> new PaintingNotFoundException(
                                                                   "Painting with id: `" + paintingId + "` not found")
                                                           );
 

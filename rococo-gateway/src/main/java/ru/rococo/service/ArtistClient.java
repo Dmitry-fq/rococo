@@ -37,7 +37,6 @@ public class ArtistClient {
             return ArtistJson.fromArtist(artistResponse);
 
         } catch (StatusRuntimeException e) {
-
             //TODO в константу
             LOG.error("### Error while calling gRPC server ", e);
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "The gRPC operation was cancelled", e);

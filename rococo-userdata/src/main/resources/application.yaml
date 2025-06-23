@@ -1,6 +1,9 @@
 server:
   port: 8091
 
+api:
+  version: v1.0
+
 grpc:
   server:
     port: 8092

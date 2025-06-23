@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.rococo.data.MuseumEntity;
 import ru.rococo.data.repository.MuseumRepository;
+import ru.rococo.ex.MuseumNotFoundException;
 import ru.rococo.grpc.AllMuseumsRequest;
 import ru.rococo.grpc.AllMuseumsResponse;
 import ru.rococo.grpc.Country;
@@ -36,7 +37,7 @@ public class MuseumService extends RococoMuseumServiceGrpc.RococoMuseumServiceIm
         String museumId = museumRequest.getId();
         Museum museumResponse = museumRepository.findById(UUID.fromString(museumId))
                                                 .map(MuseumEntity::toMuseum)
-                                                .orElseThrow(() -> new RuntimeException(
+                                                .orElseThrow(() -> new MuseumNotFoundException(
                                                         "Museum with id: `" + museumId + "` not found")
                                                 );
 
@@ -60,7 +61,7 @@ public class MuseumService extends RococoMuseumServiceGrpc.RococoMuseumServiceIm
     public void updateMuseum(Museum museumRequest, StreamObserver<Museum> responseObserver) {
         String museumId = museumRequest.getId();
         MuseumEntity museumEntity = museumRepository.findById(UUID.fromString(museumId))
-                                                    .orElseThrow(() -> new RuntimeException(
+                                                    .orElseThrow(() -> new MuseumNotFoundException(
                                                             "Museum with id: `" + museumId + "` not found")
                                                     );
         String country = getCountryNameById(museumRequest.getGeo().getCountry().getId());
