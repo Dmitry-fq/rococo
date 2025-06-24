@@ -36,7 +36,9 @@ public class MuseumService extends RococoMuseumServiceGrpc.RococoMuseumServiceIm
     public void getMuseum(Museum museumRequest, StreamObserver<Museum> responseObserver) {
         String museumId = museumRequest.getId();
         Museum museumResponse = museumRepository.findById(UUID.fromString(museumId))
-                                                .map(MuseumEntity::toMuseum)
+                                                .map(museumEntity -> museumEntity.toMuseum(
+                                                        getCountryNameById(museumEntity.getCountryId())
+                                                ))
                                                 .orElseThrow(() -> new MuseumNotFoundException(
                                                         "Museum with id: `" + museumId + "` not found")
                                                 );
@@ -49,7 +51,9 @@ public class MuseumService extends RococoMuseumServiceGrpc.RococoMuseumServiceIm
     public void allMuseums(AllMuseumsRequest request, StreamObserver<AllMuseumsResponse> responseObserver) {
         AllMuseumsResponse response = AllMuseumsResponse.newBuilder().addAllMuseums(
                 museumRepository.findAll().stream()
-                                .map(MuseumEntity::toMuseum)
+                                .map(museumEntity -> museumEntity.toMuseum(
+                                        getCountryNameById(museumEntity.getCountryId())
+                                ))
                                 .toList()
         ).build();
 
@@ -64,37 +68,40 @@ public class MuseumService extends RococoMuseumServiceGrpc.RococoMuseumServiceIm
                                                     .orElseThrow(() -> new MuseumNotFoundException(
                                                             "Museum with id: `" + museumId + "` not found")
                                                     );
-        String country = getCountryNameById(museumRequest.getGeo().getCountry().getId());
-        updateMuseumEntityFromRequest(museumEntity, museumRequest, country);
+
+        updateMuseumEntityFromRequest(museumEntity, museumRequest);
 
         museumRepository.save(museumEntity);
 
-        responseObserver.onNext(museumEntity.toMuseum());
+        responseObserver.onNext(museumEntity.toMuseum(
+                getCountryNameById(museumEntity.getCountryId())
+        ));
         responseObserver.onCompleted();
     }
 
     @Override
     public void addMuseum(Museum museumRequest, StreamObserver<Museum> responseObserver) {
         MuseumEntity museumEntity = new MuseumEntity();
-        String country = getCountryNameById(museumRequest.getGeo().getCountry().getId());
-        updateMuseumEntityFromRequest(museumEntity, museumRequest, country);
+        updateMuseumEntityFromRequest(museumEntity, museumRequest);
 
         museumRepository.save(museumEntity);
 
-        responseObserver.onNext(museumEntity.toMuseum());
+        responseObserver.onNext(museumEntity.toMuseum(
+                getCountryNameById(museumEntity.getCountryId())
+        ));
         responseObserver.onCompleted();
     }
 
-    private String getCountryNameById(String countryId) {
+    private String getCountryNameById(UUID countryId) {
         Country countryResponse = geoClient.getCountry(
                 Country.newBuilder()
-                       .setId(countryId)
+                       .setId(String.valueOf(countryId))
                        .build());
 
         return countryResponse.getName();
     }
 
-    private void updateMuseumEntityFromRequest(MuseumEntity museumEntity, Museum museumRequest, String country) {
+    private void updateMuseumEntityFromRequest(MuseumEntity museumEntity, Museum museumRequest) {
         museumEntity.setTitle(museumRequest.getTitle());
         museumEntity.setDescription(museumRequest.getDescription());
         String photo = museumRequest.getPhoto();
@@ -106,7 +113,6 @@ public class MuseumService extends RococoMuseumServiceGrpc.RococoMuseumServiceIm
                         museumRequest.getGeo().getCountry().getId()
                 )
         );
-        museumEntity.setCountry(country);
         museumEntity.setCity(museumRequest.getGeo().getCity());
     }
 

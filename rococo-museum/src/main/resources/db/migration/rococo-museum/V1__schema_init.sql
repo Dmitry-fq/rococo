@@ -6,9 +6,8 @@ create table if not exists "museum"
     title       varchar(50),
     description varchar(255),
     photo       bytea,
-    country_id  UUID,
-    country     varchar(50),
-    city        varchar(50),
+    country_id  UUID        not null,
+    city        varchar(50) not null,
     primary key (id)
 );
 

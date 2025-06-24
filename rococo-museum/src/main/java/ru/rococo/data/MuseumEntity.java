@@ -40,12 +40,9 @@ public class MuseumEntity implements Serializable {
     private UUID countryId;
 
     @Column()
-    private String country;
-
-    @Column()
     private String city;
 
-    public Museum toMuseum() {
+    public Museum toMuseum(String country) {
         return Museum.newBuilder()
                      .setId(id.toString())
                      .setTitle(title != null ? title : "")

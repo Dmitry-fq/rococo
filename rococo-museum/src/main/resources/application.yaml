@@ -7,6 +7,10 @@ api:
 grpc:
   server:
     port: 8098
+  client:
+    geoClient:
+      address: 'static://localhost:8096'
+      negotiationType: PLAINTEXT
 
 spring:
   application:
