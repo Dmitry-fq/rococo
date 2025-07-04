@@ -10,6 +10,7 @@ option java_outer_classname = "RococoGeoProto";
 
 service RococoGeoService {
   rpc GetCountry (Country) returns (Country) {}
+  rpc GetCountryByName (Country) returns (Country) {}
   rpc AllCountries (Pageable) returns (AllCountriesResponse) {}
 }
 

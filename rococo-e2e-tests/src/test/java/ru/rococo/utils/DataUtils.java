@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.function.Supplier;
 
 public class DataUtils {
 
@@ -21,6 +22,15 @@ public class DataUtils {
     private static final Logger LOG = LoggerFactory.getLogger(DataUtils.class);
 
     @Nonnull
+    public static String getNotBlankStringOrRandom(String value, Supplier<String> supplier) {
+        if (!value.isBlank()) {
+            return value;
+        } else {
+            return supplier.get();
+        }
+    }
+
+    @Nonnull
     public static String randomUsername() {
         return faker.name().username();
     }
@@ -28,6 +38,21 @@ public class DataUtils {
     @Nonnull
     public static String randomArtistName() {
         return faker.artist().name();
+    }
+
+    @Nonnull
+    public static String randomMuseumName() {
+        return faker.lorem().sentence(1, 0) + " museum";
+    }
+
+    @Nonnull
+    public static String randomCountryName() {
+        return faker.country().name();
+    }
+
+    @Nonnull
+    public static String randomCityName() {
+        return faker.address().cityName();
     }
 
     @Nonnull
@@ -50,4 +75,5 @@ public class DataUtils {
     public static String getDefaultPassword() {
         return DEFAULT_PASSWORD;
     }
+
 }

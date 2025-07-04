@@ -34,7 +34,7 @@ public class ArtistExtension implements BeforeEachCallback, ParameterResolver {
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Artist.class)
                          .ifPresent(artistAnnotation -> {
                                      ArtistJson createdArtistJson = artistClient.addArtist(
@@ -45,7 +45,6 @@ public class ArtistExtension implements BeforeEachCallback, ParameterResolver {
                                                      getPhotoByAnnotationOrEmpty(artistAnnotation)
                                              )
                                      );
-
                                      setArtistToContext(createdArtistJson);
                                  }
                          );
@@ -68,10 +67,10 @@ public class ArtistExtension implements BeforeEachCallback, ParameterResolver {
     }
 
     private String getPhotoByAnnotationOrEmpty(Artist artistAnnotation) {
-        if (artistAnnotation.photo().isBlank()) {
-            return artistAnnotation.photo();
+        if (artistAnnotation.photoPath().isBlank()) {
+            return "";
         } else {
-            return findPictureByPath(artistAnnotation.photo());
+            return findPictureByPath(artistAnnotation.photoPath());
         }
     }
 

@@ -10,7 +10,7 @@ import java.util.List;
 public interface ArtistClient {
 
     @Nonnull
-    ArtistJson getArtist(String username);
+    ArtistJson getArtist(String id);
 
     @Nonnull
     List<ArtistJson> allArtists(String username, int page, int size);

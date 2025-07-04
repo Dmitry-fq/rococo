@@ -5,6 +5,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import ru.rococo.data.CountryEntity;
 import ru.rococo.data.repository.CountryRepository;
 import ru.rococo.ex.CountryNotFoundException;
@@ -41,9 +42,22 @@ public class GeoService extends RococoGeoServiceGrpc.RococoGeoServiceImplBase {
     }
 
     @Override
+    public void getCountryByName(Country countryRequest, StreamObserver<Country> responseObserver) {
+        Country response = countryRepository.findByName(countryRequest.getName())
+                                            .map(CountryEntity::toCountry)
+                                            .orElseThrow(() -> new CountryNotFoundException(
+                                                    "Country with name: `" + countryRequest.getName() + "` not found")
+                                            );
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
     public void allCountries(Pageable pageable, StreamObserver<AllCountriesResponse> responseObserver) {
+        org.springframework.data.domain.Pageable pageableGrpc = PageRequest.of(pageable.getPage(), pageable.getSize());
         AllCountriesResponse response = AllCountriesResponse.newBuilder().addAllCountries(
-                countryRepository.findAll().stream()
+                countryRepository.findAll(pageableGrpc).stream()
                                  .map(CountryEntity::toCountry)
                                  .toList()
         ).build();
