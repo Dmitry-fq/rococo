@@ -9,7 +9,6 @@ import ru.rococo.api.core.ThreadSafeCookieStore;
 
 import java.io.IOException;
 
-import static com.codeborne.selenide.Selenide.sleep;
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.rococo.utils.OAuthUtils.generateCodeChallenge;
 import static ru.rococo.utils.OAuthUtils.generateCodeVerifier;
@@ -75,7 +74,6 @@ public class AuthApiClient extends RestClient {
 
     public String oAuthLogin(String username, String password) {
         final Response<Void> response;
-        sleep(10000);
         try {
             response = authApi.login(
                     username,

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
-import ru.rococo.data.UserEntity;
 import ru.rococo.jupiter.annotation.User;
 import ru.rococo.model.UserJson;
 import ru.rococo.service.UsersClient;
@@ -19,29 +18,46 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     private final UsersClient userdataApiClient = new UserdataApiClient();
 
+    private static void setUserToContext(UserJson testUser) {
+        final ExtensionContext context = TestMethodContextExtension.context();
+        context.getStore(NAMESPACE).put(
+                context.getUniqueId(),
+                testUser
+        );
+    }
+
+    public static UserJson getUserFromContext() {
+        final ExtensionContext context = TestMethodContextExtension.context();
+        return context.getStore(NAMESPACE).get(context.getUniqueId(), UserJson.class);
+    }
+
     @Override
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                          .ifPresent(userAnnotation -> {
-                             if ("".equals(userAnnotation.username())) {
-                                 final String username = DataUtils.randomUsername();
-                                 UserEntity userEntity = new UserEntity();
-                                 userEntity.setUsername(username);
-                                 UserJson createdUserJson = userdataApiClient.createUser(
-                                         username,
-                                         DataUtils.getDefaultPassword());
-                                 System.out.println(createdUserJson);
-                             }
+                             UserJson createdUserJson = userdataApiClient.createUser(
+                                     getUsernameByAnnotationOrRandom(userAnnotation),
+                                     DataUtils.getDefaultPassword());
+
+                             setUserToContext(createdUserJson);
                          });
+    }
+
+    private String getUsernameByAnnotationOrRandom(User userAnnotation) {
+        if (userAnnotation.username().isBlank()) {
+            return DataUtils.randomUsername();
+        } else {
+            return userAnnotation.username();
+        }
     }
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return false;
+        return parameterContext.getParameter().getType().isAssignableFrom(UserJson.class);
     }
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return null;
+        return getUserFromContext();
     }
 }

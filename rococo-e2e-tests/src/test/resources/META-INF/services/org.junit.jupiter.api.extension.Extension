@@ -1,1 +1,2 @@
 ru.rococo.jupiter.extension.CookieJarExtension
+ru.rococo.jupiter.extension.TestMethodContextExtension
