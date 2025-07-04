@@ -5,6 +5,8 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.rococo.data.MuseumEntity;
 import ru.rococo.data.repository.MuseumRepository;
 import ru.rococo.ex.MuseumNotFoundException;
@@ -49,8 +51,9 @@ public class MuseumService extends RococoMuseumServiceGrpc.RococoMuseumServiceIm
 
     @Override
     public void allMuseums(AllMuseumsRequest request, StreamObserver<AllMuseumsResponse> responseObserver) {
+        Pageable pageable = PageRequest.of(request.getPageable().getPage(), request.getPageable().getSize());
         AllMuseumsResponse response = AllMuseumsResponse.newBuilder().addAllMuseums(
-                museumRepository.findAll().stream()
+                museumRepository.findAllByTitleContainingIgnoreCase(request.getTitle(), pageable).stream()
                                 .map(museumEntity -> museumEntity.toMuseum(
                                         getCountryNameById(museumEntity.getCountryId())
                                 ))
