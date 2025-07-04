@@ -8,7 +8,6 @@ create table if not exists "artist"
     name      varchar(50) unique not null,
     biography varchar(255),
     photo     bytea,
-    username  varchar(50),
     primary key (id)
 );
 

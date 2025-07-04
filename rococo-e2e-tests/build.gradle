@@ -76,6 +76,7 @@ dependencies {
     testImplementation("com.github.javafaker:javafaker:${fakerVersion}") {
 //        exclude group: 'org.yaml'
     }
+    testImplementation 'com.google.guava:guava:33.4.8-jre'
     testImplementation 'com.github.vertical-blank:sql-formatter:2.0.5'
     // gRPC
     testImplementation "io.grpc:grpc-api:${project.ext.grpcVersion}"
