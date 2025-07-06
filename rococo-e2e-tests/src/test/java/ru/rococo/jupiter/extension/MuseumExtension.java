@@ -7,15 +7,11 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 import ru.rococo.jupiter.annotation.Museum;
-import ru.rococo.model.CountryJson;
-import ru.rococo.model.GeoJson;
 import ru.rococo.model.MuseumJson;
 import ru.rococo.service.MuseumClient;
 import ru.rococo.service.impl.MuseumGrpcClient;
-import ru.rococo.utils.DataUtils;
 
-import static ru.rococo.utils.DataUtils.findPictureByPath;
-import static ru.rococo.utils.DataUtils.getNotBlankStringOrRandom;
+import java.util.Objects;
 
 public class MuseumExtension implements BeforeEachCallback, ParameterResolver {
 
@@ -36,39 +32,20 @@ public class MuseumExtension implements BeforeEachCallback, ParameterResolver {
         return context.getStore(NAMESPACE).get(context.getUniqueId(), MuseumJson.class);
     }
 
+    public static MuseumJson getMuseumByTitleOrCreate(MuseumClient museumClient, Museum museumAnnotation) {
+        MuseumJson museumJson = museumClient.getMuseumByTitle(museumAnnotation.title());
+        return Objects.requireNonNullElseGet(museumJson, () ->
+                museumClient.addMuseum(MuseumJson.fromAnnotation(museumAnnotation)));
+    }
+
     @Override
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Museum.class)
                          .ifPresent(museumAnnotation -> {
-                                     MuseumJson createdMuseumJson = museumClient.addMuseum(
-                                             new MuseumJson(
-                                                     null,
-                                                     getNotBlankStringOrRandom(museumAnnotation.title(), DataUtils::randomMuseumName),
-                                                     getNotBlankStringOrRandom(museumAnnotation.description(), DataUtils::randomText),
-                                                     getPhotoByAnnotationOrEmpty(museumAnnotation),
-                                                     new GeoJson(
-                                                             new CountryJson(
-                                                                     null,
-                                                                     getNotBlankStringOrRandom(
-                                                                             museumAnnotation.country(),
-                                                                             DataUtils::randomCountryName
-                                                                     )
-                                                             ),
-                                                             getNotBlankStringOrRandom(museumAnnotation.city(), DataUtils::randomCityName)
-                                                     )
-                                             )
-                                     );
+                                     MuseumJson createdMuseumJson = getMuseumByTitleOrCreate(museumClient, museumAnnotation);
                                      setMuseumToContext(createdMuseumJson);
                                  }
                          );
-    }
-
-    private String getPhotoByAnnotationOrEmpty(Museum museumAnnotation) {
-        if (!museumAnnotation.photoPath().isBlank()) {
-            return findPictureByPath(museumAnnotation.photoPath());
-        } else {
-            return "";
-        }
     }
 
     @Override

@@ -20,7 +20,10 @@ import ru.rococo.model.MuseumJson;
 import ru.rococo.service.GeoClient;
 import ru.rococo.service.MuseumClient;
 
+import javax.annotation.Nullable;
 import java.util.List;
+
+import static java.lang.Integer.MAX_VALUE;
 
 public class MuseumGrpcClient implements MuseumClient {
 
@@ -39,7 +42,7 @@ public class MuseumGrpcClient implements MuseumClient {
         this.rococoMuseumServiceBlockingStub = RococoMuseumServiceGrpc.newBlockingStub(channel);
     }
 
-    @NotNull
+    @Nullable
     @Override
     public MuseumJson getMuseum(@NotNull String id) {
         try {
@@ -54,6 +57,14 @@ public class MuseumGrpcClient implements MuseumClient {
             LOG.error("### Error while calling gRPC server ", e);
             throw new NotFoundException("The gRPC operation was cancelled", e);
         }
+    }
+
+    @Nullable
+    @Override
+    public MuseumJson getMuseumByTitle(@NotNull String name) {
+        return allMuseums(name, 0, MAX_VALUE).stream()
+                                             .findFirst()
+                                             .orElse(null);
     }
 
     @NotNull

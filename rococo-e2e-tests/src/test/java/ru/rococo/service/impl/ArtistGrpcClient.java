@@ -17,7 +17,10 @@ import ru.rococo.model.ArtistJson;
 import ru.rococo.service.ArtistClient;
 import ru.rococo.service.UserdataClient;
 
+import javax.annotation.Nullable;
 import java.util.List;
+
+import static java.lang.Integer.MAX_VALUE;
 
 public class ArtistGrpcClient implements ArtistClient {
 
@@ -49,6 +52,14 @@ public class ArtistGrpcClient implements ArtistClient {
             LOG.error("### Error while calling gRPC server ", e);
             throw new NotFoundException("The gRPC operation was cancelled", e);
         }
+    }
+
+    @Nullable
+    @Override
+    public ArtistJson getArtistByName(@NotNull String name) {
+        return allArtists(name, 0, MAX_VALUE).stream()
+                                             .findFirst()
+                                             .orElse(null);
     }
 
     @NotNull

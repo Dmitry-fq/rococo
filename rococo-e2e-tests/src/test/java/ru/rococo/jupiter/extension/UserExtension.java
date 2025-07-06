@@ -35,11 +35,11 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                          .ifPresent(userAnnotation -> {
-                             UserJson createdUserJson = userdataApiClient.createUser(
+                             UserJson createdUser = userdataApiClient.createUser(
                                      getUsernameByAnnotationOrRandom(userAnnotation),
                                      DataUtils.getDefaultPassword());
 
-                             setUserToContext(createdUserJson);
+                             setUserToContext(createdUser);
                          });
     }
 

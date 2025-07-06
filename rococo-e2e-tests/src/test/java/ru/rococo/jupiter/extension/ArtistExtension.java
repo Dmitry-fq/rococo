@@ -10,9 +10,8 @@ import ru.rococo.jupiter.annotation.Artist;
 import ru.rococo.model.ArtistJson;
 import ru.rococo.service.ArtistClient;
 import ru.rococo.service.impl.ArtistGrpcClient;
-import ru.rococo.utils.DataUtils;
 
-import static ru.rococo.utils.DataUtils.findPictureByPath;
+import java.util.Objects;
 
 public class ArtistExtension implements BeforeEachCallback, ParameterResolver {
 
@@ -33,45 +32,21 @@ public class ArtistExtension implements BeforeEachCallback, ParameterResolver {
         return context.getStore(NAMESPACE).get(context.getUniqueId(), ArtistJson.class);
     }
 
+    public static ArtistJson getArtistByNameOrCreate(ArtistClient artistClient, Artist artistAnnotation) {
+        ArtistJson artistJson = artistClient.getArtistByName(artistAnnotation.name());
+
+        return Objects.requireNonNullElseGet(artistJson, () ->
+                artistClient.addArtist(ArtistJson.fromAnnotation(artistAnnotation)));
+    }
+
     @Override
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Artist.class)
                          .ifPresent(artistAnnotation -> {
-                                     ArtistJson createdArtistJson = artistClient.addArtist(
-                                             new ArtistJson(
-                                                     null,
-                                                     getNameByAnnotationOrRandom(artistAnnotation),
-                                                     getBiographyByAnnotationOrRandom(artistAnnotation),
-                                                     getPhotoByAnnotationOrEmpty(artistAnnotation)
-                                             )
-                                     );
-                                     setArtistToContext(createdArtistJson);
+                                     ArtistJson createdArtist = getArtistByNameOrCreate(artistClient, artistAnnotation);
+                                     setArtistToContext(createdArtist);
                                  }
                          );
-    }
-
-    private String getNameByAnnotationOrRandom(Artist artistAnnotation) {
-        if (artistAnnotation.name().isBlank()) {
-            return DataUtils.randomArtistName();
-        } else {
-            return artistAnnotation.name();
-        }
-    }
-
-    private String getBiographyByAnnotationOrRandom(Artist artistAnnotation) {
-        if (artistAnnotation.name().isBlank()) {
-            return DataUtils.randomText();
-        } else {
-            return artistAnnotation.biography();
-        }
-    }
-
-    private String getPhotoByAnnotationOrEmpty(Artist artistAnnotation) {
-        if (artistAnnotation.photoPath().isBlank()) {
-            return "";
-        } else {
-            return findPictureByPath(artistAnnotation.photoPath());
-        }
     }
 
     @Override

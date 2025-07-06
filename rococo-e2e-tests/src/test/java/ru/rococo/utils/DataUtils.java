@@ -31,6 +31,15 @@ public class DataUtils {
     }
 
     @Nonnull
+    public static String getImageByPathOrEmpty(String path) {
+        if (!path.isBlank()) {
+            return findPictureByPath(path);
+        } else {
+            return "";
+        }
+    }
+
+    @Nonnull
     public static String randomUsername() {
         return faker.name().username();
     }
@@ -42,7 +51,12 @@ public class DataUtils {
 
     @Nonnull
     public static String randomMuseumName() {
-        return faker.lorem().sentence(1, 0) + " museum";
+        return faker.lorem().sentence(1, 0).replace(".", "") + " museum";
+    }
+
+    @Nonnull
+    public static String randomPaintingName() {
+        return faker.lorem().sentence(1, 0).replace(".", "") + " painting";
     }
 
     @Nonnull
@@ -61,7 +75,12 @@ public class DataUtils {
     }
 
     @Nonnull
-    public static String findPictureByPath(String path) {
+    public static String getDefaultPassword() {
+        return DEFAULT_PASSWORD;
+    }
+
+    @Nonnull
+    private static String findPictureByPath(String path) {
         try {
             byte[] bytes = Resources.toByteArray(Resources.getResource(path));
             return "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(bytes);
@@ -70,10 +89,4 @@ public class DataUtils {
             return "";
         }
     }
-
-    @Nonnull
-    public static String getDefaultPassword() {
-        return DEFAULT_PASSWORD;
-    }
-
 }
