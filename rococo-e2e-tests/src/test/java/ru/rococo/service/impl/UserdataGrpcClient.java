@@ -1,11 +1,10 @@
 package ru.rococo.service.impl;
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.StatusRuntimeException;
-import org.openqa.selenium.NotFoundException;
+import com.google.common.base.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.rococo.api.core.GrpcClient;
+import ru.rococo.api.core.ThreadSafeCookieStore;
 import ru.rococo.config.Config;
 import ru.rococo.grpc.RococoUserdataServiceGrpc;
 import ru.rococo.grpc.UserRequest;
@@ -14,8 +13,11 @@ import ru.rococo.model.UserJson;
 import ru.rococo.service.UserdataClient;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.TimeUnit;
 
-public class UserdataGrpcClient implements UserdataClient {
+import static java.lang.Thread.sleep;
+
+public class UserdataGrpcClient extends GrpcClient implements UserdataClient {
 
     protected static final Config CFG = Config.getInstance();
 
@@ -23,27 +25,48 @@ public class UserdataGrpcClient implements UserdataClient {
 
     private final RococoUserdataServiceGrpc.RococoUserdataServiceBlockingStub rococoUserdataServiceStub;
 
+    private final AuthApiClient authApiClient = new AuthApiClient();
+
     public UserdataGrpcClient() {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(CFG.userdataGrpcAddress(), CFG.userdataGrpcPort())
-                                                      .usePlaintext()
-                                                      .build();
+        super(CFG.userdataGrpcAddress(), CFG.userdataGrpcPort());
         this.rococoUserdataServiceStub = RococoUserdataServiceGrpc.newBlockingStub(channel);
     }
 
     @Nonnull
     @Override
     public UserJson getUser(@Nonnull String username) {
-        try {
-            UserResponse userResponse = rococoUserdataServiceStub.getUser(
-                    UserRequest.newBuilder()
-                               .setUsername(username)
-                               .build()
-            );
-            return UserJson.fromUserResponse(userResponse);
+        UserResponse userResponse = rococoUserdataServiceStub.getUser(
+                UserRequest.newBuilder()
+                           .setUsername(username)
+                           .build()
+        );
+        return UserJson.fromUserResponse(userResponse);
+    }
 
-        } catch (StatusRuntimeException e) {
-            LOG.error("### Error while calling gRPC server ", e);
-            throw new NotFoundException("The gRPC operation was cancelled", e);
+    @Nonnull
+    @Override
+    public UserJson createUser(@Nonnull String username, @Nonnull String password) {
+        try {
+            authApiClient.getRegisterPage();
+            authApiClient.registerUser(
+                    username,
+                    password,
+                    password,
+                    ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")
+            );
+            int maxWaitTime = 3000;
+            Stopwatch sw = Stopwatch.createStarted();
+            while (sw.elapsed(TimeUnit.MILLISECONDS) < maxWaitTime) {
+                UserJson userJson = getUser(username);
+                if (userJson.id() != null) {
+                    return userJson;
+                } else {
+                    sleep(1000);
+                }
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+        throw new AssertionError("Пользователь " + username + " не был найден за отведённое время");
     }
 }
