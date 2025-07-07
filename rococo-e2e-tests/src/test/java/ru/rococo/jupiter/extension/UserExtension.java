@@ -8,17 +8,17 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 import ru.rococo.jupiter.annotation.User;
 import ru.rococo.model.UserJson;
-import ru.rococo.service.UsersClient;
-import ru.rococo.service.impl.UserdataApiClient;
+import ru.rococo.service.UserdataClient;
+import ru.rococo.service.impl.UserdataGrpcClient;
 import ru.rococo.utils.DataUtils;
 
 public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
 
-    private final UsersClient userdataApiClient = new UserdataApiClient();
+    private final UserdataClient userdataApiClient = new UserdataGrpcClient();
 
-    private static void setUserToContext(UserJson testUser) {
+    public static void setUserToContext(UserJson testUser) {
         final ExtensionContext context = TestMethodContextExtension.context();
         context.getStore(NAMESPACE).put(
                 context.getUniqueId(),
@@ -37,7 +37,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                          .ifPresent(userAnnotation -> {
                              UserJson createdUser = userdataApiClient.createUser(
                                      getUsernameByAnnotationOrRandom(userAnnotation),
-                                     DataUtils.getDefaultPassword());
+                                     userAnnotation.password());
 
                              setUserToContext(createdUser);
                          });

@@ -2,7 +2,6 @@ package ru.rococo.utils;
 
 import com.github.javafaker.Faker;
 import com.google.common.io.Resources;
-import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +12,9 @@ import java.util.function.Supplier;
 
 public class DataUtils {
 
-    private static final Faker faker = new Faker();
+    public static final String DEFAULT_PASSWORD = "12345";
 
-    @Getter
-    private static final String DEFAULT_PASSWORD = "12345";
+    private static final Faker faker = new Faker();
 
     // TODO не работает
     private static final Logger LOG = LoggerFactory.getLogger(DataUtils.class);
@@ -72,11 +70,6 @@ public class DataUtils {
     @Nonnull
     public static String randomText() {
         return faker.lorem().sentence();
-    }
-
-    @Nonnull
-    public static String getDefaultPassword() {
-        return DEFAULT_PASSWORD;
     }
 
     @Nonnull

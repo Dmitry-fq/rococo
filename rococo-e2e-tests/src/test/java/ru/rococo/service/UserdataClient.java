@@ -10,4 +10,7 @@ public interface UserdataClient {
 
     @Nonnull
     UserJson getUser(String username);
+
+    @Nonnull
+    UserJson createUser(@Nonnull String username, @Nonnull String password);
 }

@@ -12,7 +12,10 @@ import ru.rococo.jupiter.annotation.ApiLogin;
 import ru.rococo.model.UserJson;
 import ru.rococo.page.MainPage;
 import ru.rococo.service.impl.AuthApiClient;
+import ru.rococo.service.impl.UserdataGrpcClient;
 import ru.rococo.utils.DataUtils;
+
+import static ru.rococo.utils.DataUtils.DEFAULT_PASSWORD;
 
 public class ApiLoginExtension implements BeforeTestExecutionCallback {
 
@@ -21,6 +24,8 @@ public class ApiLoginExtension implements BeforeTestExecutionCallback {
     private static final Config CFG = Config.getInstance();
 
     private final AuthApiClient authApiClient = new AuthApiClient();
+
+    private final UserdataGrpcClient userdataGrpcClient = new UserdataGrpcClient();
 
     public static String getToken() {
         return TestMethodContextExtension.context().getStore(NAMESPACE).get("token", String.class);
@@ -41,25 +46,27 @@ public class ApiLoginExtension implements BeforeTestExecutionCallback {
     public void beforeTestExecution(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ApiLogin.class)
                          .ifPresent(apiLogin -> {
-                             final UserJson userFromUserExtension = UserExtension.getUserFromContext();
-                             if (apiLogin.username().isBlank() || apiLogin.password().isBlank()) {
-                                 if (userFromUserExtension == null) {
-                                     throw new IllegalStateException("Аннотация @User должна присутствовать," +
-                                             " если в @ApiLogin username и password не заполнены");
+                             final UserJson userJson;
+                             if (apiLogin.username().isBlank()) {
+                                 if (UserExtension.getUserFromContext() == null) {
+                                     userJson = userdataGrpcClient.createUser(
+                                             DataUtils.randomUsername(),
+                                             DEFAULT_PASSWORD
+                                     );
+                                 } else {
+                                     userJson = UserExtension.getUserFromContext();
                                  }
                              } else {
-                                 if (userFromUserExtension == null) {
-                                     throw new IllegalStateException("Аннотация @User не должна присутствовать," +
-                                             " если в @ApiLogin заполнены username и password");
-                                 }
+                                 userJson = userdataGrpcClient.getUser(apiLogin.username());
                              }
-                             setTokenToContext(userFromUserExtension);
+
+                             setTokenToContext(userJson.username());
                              setTokenInBrowser();
                          });
     }
 
-    private void setTokenToContext(UserJson user) {
-        final String token = authApiClient.login(user.username(), DataUtils.getDefaultPassword());
+    private void setTokenToContext(String username) {
+        final String token = authApiClient.login(username, DEFAULT_PASSWORD);
         setToken(token);
     }
 
