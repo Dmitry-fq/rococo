@@ -43,6 +43,11 @@ public class DataUtils {
     }
 
     @Nonnull
+    public static String randomSurname() {
+        return faker.name().lastName();
+    }
+
+    @Nonnull
     public static String randomArtistName() {
         return faker.artist().name();
     }
@@ -70,6 +75,11 @@ public class DataUtils {
     @Nonnull
     public static String randomText() {
         return faker.lorem().sentence();
+    }
+
+    @Nonnull
+    public static String randomCharactersInQuantity(int quantity) {
+        return faker.lorem().characters(quantity);
     }
 
     @Nonnull
