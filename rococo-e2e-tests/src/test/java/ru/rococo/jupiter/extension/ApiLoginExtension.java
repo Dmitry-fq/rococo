@@ -76,6 +76,6 @@ public class ApiLoginExtension implements BeforeTestExecutionCallback {
         WebDriverRunner.getWebDriver().manage().addCookie(
                 getJsessionIdCookie()
         );
-        Selenide.open(CFG.frontUrl(), MainPage.class).checkAuthorization();
+        Selenide.open(CFG.frontUrl(), MainPage.class).checkAuthorized();
     }
 }
