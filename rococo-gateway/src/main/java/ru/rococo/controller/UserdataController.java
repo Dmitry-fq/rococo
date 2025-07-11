@@ -1,6 +1,7 @@
 package ru.rococo.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -32,8 +33,7 @@ public class UserdataController {
     }
 
     @PatchMapping("/user")
-    public UserJson updateUser(@RequestBody UserJson updatedUser) {
+    public UserJson updateUser(@Valid @RequestBody UserJson updatedUser) {
         return userdataClient.updateUser(updatedUser);
-
     }
 }

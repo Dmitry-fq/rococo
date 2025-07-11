@@ -4,8 +4,10 @@ import io.grpc.Metadata;
 import io.grpc.StatusRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.rococo.ex.error.ApiError;
@@ -16,6 +18,9 @@ import java.util.Optional;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @Value("${api.version}")
+    private String apiVersion;
 
     @ExceptionHandler(StatusRuntimeException.class)
     public ResponseEntity<ApiError> handleStatusRuntimeException(StatusRuntimeException ex) {
@@ -30,15 +35,24 @@ public class GlobalExceptionHandler {
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
 
-        return createResponseEntity(ex, status);
+        return createResponseEntity(getApiVersionFromMetadata(ex), status, ex.getStatus().getDescription());
     }
 
-    private ResponseEntity<ApiError> createResponseEntity(StatusRuntimeException ex, HttpStatus httpStatus) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        return createResponseEntity(
+                apiVersion,
+                HttpStatus.BAD_REQUEST,
+                Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage()
+        );
+    }
+
+    private ResponseEntity<ApiError> createResponseEntity(String apiVersion, HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(
                 new ApiError(
-                        getApiVersionFromMetadata(ex),
+                        apiVersion,
                         String.valueOf(httpStatus.value()),
-                        ex.getStatus().getDescription()
+                        message
                 ),
                 httpStatus
         );
