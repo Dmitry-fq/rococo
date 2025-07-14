@@ -51,10 +51,31 @@ public class MainPage extends BasePage<MainPage> {
         return this;
     }
 
-    @Step("Проверка что пользователь авторизован")
+    @Step("Проверка что пользователь не авторизован")
     @Nonnull
     public MainPage checkNotAuthorized() {
         header.checkEnterButton();
         return this;
+    }
+
+    @Step("Клик на кнопку 'Картины' ")
+    @Nonnull
+    public PaintingPage clickPaintingButton() {
+        paintingsButton.click();
+        return new PaintingPage();
+    }
+
+    @Step("Клик на кнопку 'Художники' ")
+    @Nonnull
+    public ArtistPage clickArtistButton() {
+        artistsButton.click();
+        return new ArtistPage();
+    }
+
+    @Step("Клик на кнопку 'Музеи' ")
+    @Nonnull
+    public MuseumPage clickMuseumButton() {
+        museumsButton.click();
+        return new MuseumPage();
     }
 }
