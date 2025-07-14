@@ -36,19 +36,19 @@ public class RegisterController {
 
     private final UserService userService;
 
-    private final String rococoFrontUri;
+    private final String rococoAuthUri;
 
     @Autowired
     public RegisterController(UserService userService,
-                              @Value("${rococo-front.base-uri}") String rococoFrontUri) {
+                              @Value("${rococo-auth.base-uri}") String rococoAuthUri) {
         this.userService = userService;
-        this.rococoFrontUri = rococoFrontUri;
+        this.rococoAuthUri = rococoAuthUri;
     }
 
     @GetMapping("/register")
     public String getRegisterPage(@Nonnull Model model) {
         model.addAttribute(MODEL_REG_FORM_ATTR, new RegistrationModel(null, null, null));
-        model.addAttribute(MODEL_FRONT_URI_ATTR, rococoFrontUri + "/main");
+        model.addAttribute(MODEL_FRONT_URI_ATTR, rococoAuthUri + "/login");
         return REGISTRATION_VIEW_NAME;
     }
 
@@ -72,24 +72,23 @@ public class RegisterController {
                 addErrorToRegistrationModel(
                         registrationModel,
                         model,
-                        "username", "Username `" + registrationModel.username() + "` already exists"
+                        "Username `" + registrationModel.username() + "` already exists"
                 );
             }
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-        model.addAttribute(MODEL_FRONT_URI_ATTR, rococoFrontUri);
+        model.addAttribute(MODEL_FRONT_URI_ATTR, rococoAuthUri + "/login");
         return REGISTRATION_VIEW_NAME;
     }
 
     private void addErrorToRegistrationModel(@Nonnull RegistrationModel registrationModel,
                                              @Nonnull Model model,
-                                             @Nonnull String fieldName,
                                              @Nonnull String error) {
         BeanPropertyBindingResult errorResult = (BeanPropertyBindingResult) model.getAttribute(REG_MODEL_ERROR_BEAN_NAME);
         if (errorResult == null) {
             errorResult = new BeanPropertyBindingResult(registrationModel, "registrationModel");
         }
-        errorResult.addError(new FieldError("registrationModel", fieldName, error));
+        errorResult.addError(new FieldError("registrationModel", "username", error));
     }
 }
