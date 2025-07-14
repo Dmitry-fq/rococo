@@ -2,7 +2,11 @@ package ru.rococo.page.component;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import ru.rococo.page.ArtistPage;
 import ru.rococo.page.LoginPage;
+import ru.rococo.page.MainPage;
+import ru.rococo.page.MuseumPage;
+import ru.rococo.page.PaintingPage;
 import ru.rococo.utils.DataUtils;
 
 import javax.annotation.Nonnull;
@@ -13,7 +17,7 @@ import static com.codeborne.selenide.Selenide.$x;
 
 public class Header {
 
-    private static final SelenideElement mainTitle = $x("//h1");
+    private static final SelenideElement mainButton = $x("//h1");
 
     private static final SelenideElement paintingsButton = $x("//a[contains(text(), 'Картины')]");
 
@@ -40,7 +44,7 @@ public class Header {
     }
 
     private void checkElements() {
-        mainTitle.shouldBe(visible);
+        mainButton.shouldBe(visible);
         paintingsButton.shouldBe(visible);
         artistsButton.shouldBe(visible);
         museumsButton.shouldBe(visible);
@@ -72,7 +76,6 @@ public class Header {
     @Step("Нажать на кнопку 'Войти'")
     public LoginPage clickEnterButton() {
         enterButton.click();
-
         return new LoginPage();
     }
 
@@ -80,7 +83,34 @@ public class Header {
     @Step("Нажать на кнопку 'Войти'")
     public Profile clickAvatarButton() {
         avatarButton.click();
-
         return new Profile();
+    }
+
+    @Nonnull
+    @Step("Нажать на кнопку 'Главная страница'")
+    public MainPage clickMainButton() {
+        mainButton.click();
+        return new MainPage();
+    }
+
+    @Nonnull
+    @Step("Нажать на кнопку 'Картины'")
+    public PaintingPage clickPaintingButton() {
+        paintingsButton.click();
+        return new PaintingPage();
+    }
+
+    @Nonnull
+    @Step("Нажать на кнопку 'Художники'")
+    public ArtistPage clickArtistButton() {
+        artistsButton.click();
+        return new ArtistPage();
+    }
+
+    @Nonnull
+    @Step("Нажать на кнопку 'Музеи'")
+    public MuseumPage clickMuseumButton() {
+        museumsButton.click();
+        return new MuseumPage();
     }
 }

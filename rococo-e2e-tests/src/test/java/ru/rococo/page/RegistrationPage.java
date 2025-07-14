@@ -146,7 +146,8 @@ public class RegistrationPage extends BasePage<RegistrationPage> {
     }
 
     @Step("Нажать на кнопку 'Войти в систему'")
-    public void clickEnterButton() {
+    public LoginPage clickEnterButton() {
         enterButton.click();
+        return new LoginPage();
     }
 }

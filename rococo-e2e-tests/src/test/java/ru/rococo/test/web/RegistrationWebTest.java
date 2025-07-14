@@ -20,8 +20,6 @@ public class RegistrationWebTest {
 
     private static final Config CFG = Config.getInstance();
 
-    private final Header header = new Header();
-
     static Stream<String> shouldRegisterNewUser() {
         return Stream.of(DataUtils.randomCharactersInQuantity(3), DataUtils.randomCharactersInQuantity(49));
     }
@@ -48,7 +46,8 @@ public class RegistrationWebTest {
                 .checkWelcomeMessage()
                 .clickEnterButton();
 
-        header.checkEnterButton();
+        new Header()
+                .checkEnterButton();
     }
 
     @User

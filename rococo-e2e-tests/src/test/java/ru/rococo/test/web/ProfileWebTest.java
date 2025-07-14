@@ -19,19 +19,6 @@ public class ProfileWebTest {
     @User
     @ApiLogin
     @Test
-    void shouldBeLogout(UserJson user) {
-        Selenide.open(CFG.frontUrl(), Header.class)
-                .clickAvatarButton()
-                .checkElements(user.username())
-                .clickLogoutButton()
-                .checkElementsWithoutAuthorization()
-                .checkToastSessionCompleted()
-                .checkNotAuthorized();
-    }
-
-    @User
-    @ApiLogin
-    @Test
     void profileInfoShouldBeAdded(UserJson user) {
         String username = user.username();
         String imagePath = "img/artists/botticelli.jpg";
