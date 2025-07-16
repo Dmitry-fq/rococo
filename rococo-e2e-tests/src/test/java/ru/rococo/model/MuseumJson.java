@@ -1,5 +1,6 @@
 package ru.rococo.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.rococo.grpc.Museum;
 import ru.rococo.utils.DataUtils;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import static ru.rococo.utils.DataUtils.getImageByPathOrEmpty;
 import static ru.rococo.utils.DataUtils.getNotBlankStringOrRandom;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record MuseumJson(
 
         @JsonProperty("id")
@@ -51,7 +53,7 @@ public record MuseumJson(
                                 null,
                                 getNotBlankStringOrRandom(
                                         museumAnnotation.country(),
-                                        DataUtils::randomCountryName
+                                        DataUtils::defaultCountryName
                                 )
                         ),
                         getNotBlankStringOrRandom(museumAnnotation.city(), DataUtils::randomCityName)

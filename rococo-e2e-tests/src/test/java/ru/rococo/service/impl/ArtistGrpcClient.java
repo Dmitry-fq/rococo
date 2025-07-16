@@ -51,9 +51,8 @@ public class ArtistGrpcClient extends GrpcClient implements ArtistClient {
                                              .orElse(null);
     }
 
-    @NotNull
     @Override
-    public List<ArtistJson> allArtists(@NotNull String name, int page, int size) {
+    public List<ArtistJson> allArtists(String name, int page, int size) {
         ArtistsResponse artistListResponse = rococoArtistServiceStub.allArtists(
                 AllArtistsRequest.newBuilder()
                                  .setName(name)

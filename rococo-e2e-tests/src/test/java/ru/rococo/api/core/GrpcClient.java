@@ -11,6 +11,7 @@ public class GrpcClient {
     protected GrpcClient(String address, int port) {
         channel = ManagedChannelBuilder.forAddress(address, port)
                                        .intercept(new GrpcConsoleInterceptor())
+                                       .maxInboundMessageSize(20 * 1024 * 1024)
                                        .usePlaintext()
                                        .build();
     }

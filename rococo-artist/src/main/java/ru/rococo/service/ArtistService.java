@@ -60,7 +60,7 @@ public class ArtistService extends RococoArtistServiceGrpc.RococoArtistServiceIm
     public void updateArtist(Artist artistRequest, StreamObserver<Artist> responseObserver) {
         String artistId = artistRequest.getId();
         ArtistEntity artistEntity = artistRepository.findById(UUID.fromString(artistId))
-                                                    .orElseThrow(() -> new RuntimeException(
+                                                    .orElseThrow(() -> new ArtistNotFoundException(
                                                             "Artist with id: `" + artistId + "` not found")
                                                     );
         updateArtistEntityFromRequest(artistEntity, artistRequest);

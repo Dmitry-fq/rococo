@@ -38,4 +38,11 @@ public class PaintingPage extends BasePage<PaintingPage> {
         addPaintingButton.shouldNotBe(visible);
         return this;
     }
+
+    @Nonnull
+    @Step("Нажать на 'Добавить картину'")
+    public PaintingPage clickAddPainting() {
+        addPaintingButton.click();
+        return this;
+    }
 }

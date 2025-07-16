@@ -14,10 +14,8 @@ import ru.rococo.grpc.Pageable;
 import ru.rococo.grpc.RococoMuseumServiceGrpc;
 import ru.rococo.model.CountryJson;
 import ru.rococo.model.MuseumJson;
-import ru.rococo.service.GeoClient;
 import ru.rococo.service.MuseumClient;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static java.lang.Integer.MAX_VALUE;
@@ -28,7 +26,7 @@ public class MuseumGrpcClient extends GrpcClient implements MuseumClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(MuseumGrpcClient.class);
 
-    private final GeoClient geoGrpcClient = new GeoGrpcClient();
+    private final GeoGrpcClient geoGrpcClient = new GeoGrpcClient();
 
     private final RococoMuseumServiceGrpc.RococoMuseumServiceBlockingStub rococoMuseumServiceBlockingStub;
 
@@ -37,7 +35,7 @@ public class MuseumGrpcClient extends GrpcClient implements MuseumClient {
         this.rococoMuseumServiceBlockingStub = RococoMuseumServiceGrpc.newBlockingStub(channel);
     }
 
-    @Nullable
+    @NotNull
     @Override
     public MuseumJson getMuseum(@NotNull String id) {
         Museum museumResponse = rococoMuseumServiceBlockingStub.getMuseum(
@@ -48,12 +46,12 @@ public class MuseumGrpcClient extends GrpcClient implements MuseumClient {
         return MuseumJson.fromMuseum(museumResponse);
     }
 
-    @Nullable
+    @NotNull
     @Override
     public MuseumJson getMuseumByTitle(@NotNull String name) {
         return allMuseums(name, 0, MAX_VALUE).stream()
                                              .findFirst()
-                                             .orElse(null);
+                                             .orElseThrow();
     }
 
     @NotNull

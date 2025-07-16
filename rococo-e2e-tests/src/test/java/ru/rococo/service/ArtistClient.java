@@ -4,10 +4,8 @@ import ru.rococo.model.ArtistJson;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-@ParametersAreNonnullByDefault
 public interface ArtistClient {
 
     @Nonnull
@@ -16,7 +14,6 @@ public interface ArtistClient {
     @Nullable
     ArtistJson getArtistByName(String name);
 
-    @Nonnull
     List<ArtistJson> allArtists(String username, int page, int size);
 
     @Nonnull

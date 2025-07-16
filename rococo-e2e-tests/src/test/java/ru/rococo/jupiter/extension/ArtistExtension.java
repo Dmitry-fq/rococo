@@ -17,7 +17,7 @@ public class ArtistExtension implements BeforeEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ArtistExtension.class);
 
-    private final ArtistClient artistClient = new ArtistGrpcClient();
+    private static final ArtistClient artistClient = new ArtistGrpcClient();
 
     private static void setArtistToContext(ArtistJson artistJson) {
         final ExtensionContext context = TestMethodContextExtension.context();
@@ -32,18 +32,28 @@ public class ArtistExtension implements BeforeEachCallback, ParameterResolver {
         return context.getStore(NAMESPACE).get(context.getUniqueId(), ArtistJson.class);
     }
 
-    public static ArtistJson getArtistByNameOrCreate(ArtistClient artistClient, Artist artistAnnotation) {
+    public static ArtistJson getArtistByNameOrCreate(Artist artistAnnotation) {
         ArtistJson artistJson = artistClient.getArtistByName(artistAnnotation.name());
 
         return Objects.requireNonNullElseGet(artistJson, () ->
                 artistClient.addArtist(ArtistJson.fromAnnotation(artistAnnotation)));
     }
 
+//    public static ArtistJson getArtistByNameOrCreate(ArtistClient artistClient, Artist[] artistAnnotation) {
+//        ArtistJson artistJson = null;
+//        if (artistAnnotation.length != 0) {
+//            artistJson = artistClient.getArtistByName(artistAnnotation[0].name());
+//        }
+//
+//        return Objects.requireNonNullElseGet(artistJson, () ->
+//                artistClient.addArtist(ArtistJson.fromAnnotation(artistAnnotation[0])));
+//    }
+
     @Override
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Artist.class)
                          .ifPresent(artistAnnotation -> {
-                                     ArtistJson createdArtist = getArtistByNameOrCreate(artistClient, artistAnnotation);
+                                     ArtistJson createdArtist = getArtistByNameOrCreate(artistAnnotation);
                                      setArtistToContext(createdArtist);
                                  }
                          );

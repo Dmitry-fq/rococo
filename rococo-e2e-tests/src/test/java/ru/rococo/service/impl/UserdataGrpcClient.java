@@ -54,7 +54,7 @@ public class UserdataGrpcClient extends GrpcClient implements UserdataClient {
                     password,
                     ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")
             );
-            int maxWaitTime = 3000;
+            int maxWaitTime = 10000;
             Stopwatch sw = Stopwatch.createStarted();
             while (sw.elapsed(TimeUnit.MILLISECONDS) < maxWaitTime) {
                 UserJson userJson = getUser(username);

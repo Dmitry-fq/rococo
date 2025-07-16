@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 import ru.rococo.jupiter.annotation.Painting;
 import ru.rococo.model.ArtistJson;
+import ru.rococo.model.CountryJson;
+import ru.rococo.model.GeoJson;
 import ru.rococo.model.MuseumJson;
 import ru.rococo.model.PaintingJson;
 import ru.rococo.service.ArtistClient;
@@ -16,6 +18,7 @@ import ru.rococo.service.PaintingClient;
 import ru.rococo.service.impl.ArtistGrpcClient;
 import ru.rococo.service.impl.MuseumGrpcClient;
 import ru.rococo.service.impl.PaintingGrpcClient;
+import ru.rococo.utils.DataUtils;
 
 public class PaintingExtension implements BeforeEachCallback, ParameterResolver {
 
@@ -44,11 +47,14 @@ public class PaintingExtension implements BeforeEachCallback, ParameterResolver 
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Painting.class)
                          .ifPresent(paintingAnnotation -> {
-                                     ArtistJson artistJson = ArtistExtension.getArtistByNameOrCreate(
-                                             artistClient, paintingAnnotation.artist()[0]);
-                                     MuseumJson museumJson = MuseumExtension.getMuseumByTitleOrCreate(
-                                             museumClient, paintingAnnotation.museum()[0]
-                                     );
+                                     ArtistJson artistJson = getArtist(paintingAnnotation);
+                                     MuseumJson museumJson = getMuseum(paintingAnnotation);
+
+//                                     ArtistJson artistJson = ArtistExtension.getArtistByNameOrCreate(
+//                                             artistClient, paintingAnnotation.artist());
+//                                     MuseumJson museumJson = MuseumExtension.getMuseumByTitleOrCreate(
+//                                             museumClient, paintingAnnotation.museum()
+//                                     );
                                      PaintingJson createdPainting = paintingClient.addPainting(
                                              PaintingJson.fromAnnotation(paintingAnnotation, artistJson, museumJson)
                                      );
@@ -57,9 +63,46 @@ public class PaintingExtension implements BeforeEachCallback, ParameterResolver 
                          );
     }
 
+    private ArtistJson getArtist(Painting paintingAnnotation) {
+        if (paintingAnnotation.artist().length != 0) {
+            return ArtistExtension.getArtistByNameOrCreate(paintingAnnotation.artist()[0]);
+        } else {
+            return artistClient.addArtist(
+                    new ArtistJson(
+                            null,
+                            DataUtils.randomArtistName(),
+                            DataUtils.randomText(),
+                            ""
+                    )
+            );
+        }
+    }
+
+    private MuseumJson getMuseum(Painting paintingAnnotation) {
+        if (paintingAnnotation.museum().length != 0) {
+            return MuseumExtension.getMuseumByTitleOrCreate(paintingAnnotation.museum()[0]);
+        } else {
+            return museumClient.addMuseum(
+                    new MuseumJson(
+                            null,
+                            DataUtils.randomMuseumName(),
+                            DataUtils.randomText(),
+                            "",
+                            new GeoJson(
+                                    new CountryJson(
+                                            null,
+                                            DataUtils.defaultCountryName()
+                                    ),
+                                    DataUtils.randomCityName()
+                            )
+                    )
+            );
+        }
+    }
+
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.getParameter().getType().isAssignableFrom(MuseumJson.class);
+        return parameterContext.getParameter().getType().isAssignableFrom(PaintingJson.class);
     }
 
     @Override

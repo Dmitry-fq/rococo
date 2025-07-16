@@ -49,7 +49,7 @@ public class DataUtils {
 
     @Nonnull
     public static String randomArtistName() {
-        return faker.artist().name();
+        return faker.artist().name() + randomCharactersInQuantity(5);
     }
 
     @Nonnull
@@ -63,8 +63,8 @@ public class DataUtils {
     }
 
     @Nonnull
-    public static String randomCountryName() {
-        return faker.country().name();
+    public static String defaultCountryName() {
+        return "Russia";
     }
 
     @Nonnull

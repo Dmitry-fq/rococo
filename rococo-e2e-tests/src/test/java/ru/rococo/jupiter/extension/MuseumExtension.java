@@ -17,7 +17,7 @@ public class MuseumExtension implements BeforeEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(MuseumExtension.class);
 
-    private final MuseumClient museumClient = new MuseumGrpcClient();
+    private static final MuseumClient museumClient = new MuseumGrpcClient();
 
     private static void setMuseumToContext(MuseumJson museumJson) {
         final ExtensionContext context = TestMethodContextExtension.context();
@@ -32,7 +32,7 @@ public class MuseumExtension implements BeforeEachCallback, ParameterResolver {
         return context.getStore(NAMESPACE).get(context.getUniqueId(), MuseumJson.class);
     }
 
-    public static MuseumJson getMuseumByTitleOrCreate(MuseumClient museumClient, Museum museumAnnotation) {
+    public static MuseumJson getMuseumByTitleOrCreate(Museum museumAnnotation) {
         MuseumJson museumJson = museumClient.getMuseumByTitle(museumAnnotation.title());
         return Objects.requireNonNullElseGet(museumJson, () ->
                 museumClient.addMuseum(MuseumJson.fromAnnotation(museumAnnotation)));
@@ -42,7 +42,7 @@ public class MuseumExtension implements BeforeEachCallback, ParameterResolver {
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Museum.class)
                          .ifPresent(museumAnnotation -> {
-                                     MuseumJson createdMuseumJson = getMuseumByTitleOrCreate(museumClient, museumAnnotation);
+                                     MuseumJson createdMuseumJson = getMuseumByTitleOrCreate(museumAnnotation);
                                      setMuseumToContext(createdMuseumJson);
                                  }
                          );
