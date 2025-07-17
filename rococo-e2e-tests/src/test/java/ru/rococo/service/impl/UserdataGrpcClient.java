@@ -1,6 +1,7 @@
 package ru.rococo.service.impl;
 
 import com.google.common.base.Stopwatch;
+import io.grpc.StatusRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.rococo.api.core.GrpcClient;
@@ -35,38 +36,40 @@ public class UserdataGrpcClient extends GrpcClient implements UserdataClient {
     @Nonnull
     @Override
     public UserJson getUser(@Nonnull String username) {
-        UserResponse userResponse = rococoUserdataServiceStub.getUser(
-                UserRequest.newBuilder()
-                           .setUsername(username)
-                           .build()
-        );
-        return UserJson.fromUserResponse(userResponse);
-    }
-
-    @Nonnull
-    @Override
-    public UserJson createUser(@Nonnull String username, @Nonnull String password) {
         try {
-            authApiClient.getRegisterPage();
-            authApiClient.registerUser(
-                    username,
-                    password,
-                    password,
-                    ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")
-            );
             int maxWaitTime = 10000;
             Stopwatch sw = Stopwatch.createStarted();
+            UserResponse userResponse;
             while (sw.elapsed(TimeUnit.MILLISECONDS) < maxWaitTime) {
-                UserJson userJson = getUser(username);
-                if (userJson.id() != null) {
-                    return userJson;
-                } else {
+                try {
+                    userResponse = rococoUserdataServiceStub.getUser(
+                            UserRequest.newBuilder()
+                                       .setUsername(username)
+                                       .build()
+                    );
+                    return UserJson.fromUserResponse(userResponse);
+                } catch (StatusRuntimeException e) {
                     sleep(1000);
                 }
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         throw new AssertionError("Пользователь " + username + " не был найден за отведённое время");
+    }
+
+    @Nonnull
+    @Override
+    public UserJson createUser(@Nonnull String username, @Nonnull String password) {
+        authApiClient.getRegisterPage();
+        authApiClient.registerUser(
+                username,
+                password,
+                password,
+                ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")
+        );
+
+        return getUser(username);
     }
 }
