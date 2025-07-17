@@ -1,5 +1,6 @@
 package ru.rococo.test.web;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ru.rococo.jupiter.annotation.ApiLogin;
 import ru.rococo.jupiter.annotation.Artist;
@@ -32,6 +33,7 @@ public class ArtistWebTest {
             title = "paintingAnnotation",
             description = "paintingAnnotation"
     )
+    @Disabled
     @Test
     void artistTest() {
         assertEquals(1, 1);

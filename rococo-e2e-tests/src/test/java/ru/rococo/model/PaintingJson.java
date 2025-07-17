@@ -48,17 +48,10 @@ public record PaintingJson(
             ArtistJson artistJson,
             MuseumJson museumJson
     ) {
-        String content = "";
-        if (paintingAnnotation.imagePath().isBlank()) {
-            content = "img/paintings/mona_lisa.jpg";
-        } else {
-            content = paintingAnnotation.imagePath();
-        }
-
         return new PaintingJson(
                 null,
                 artistJson,
-                getImageByPathOrEmpty(content),
+                getImageByPathOrEmpty(paintingAnnotation.imagePath()),
                 getNotBlankStringOrRandom(paintingAnnotation.title(), DataUtils::randomPaintingName),
                 getNotBlankStringOrRandom(paintingAnnotation.description(), DataUtils::randomText),
                 museumJson

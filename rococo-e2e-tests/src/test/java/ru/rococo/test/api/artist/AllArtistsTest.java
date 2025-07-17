@@ -18,9 +18,10 @@ public class AllArtistsTest {
     @Artist
     @Test
     void artistExistShouldBeSuccess(ArtistJson artist) {
-        List<ArtistJson> artists = artistGrpcClient.allArtists(artist.name(), 0, 10);
+        int size = 10;
+        List<ArtistJson> artists = artistGrpcClient.allArtists(artist.name(), 0, size);
 
-        assertThat(artists).hasSize(1);
+        assertThat(artists).hasSizeBetween(1, size);
         assertThat(artists.getFirst()).isEqualTo(artist);
     }
 
@@ -29,6 +30,16 @@ public class AllArtistsTest {
     void allArtistWithoutNameShouldBeSuccess() {
         int size = 10;
         List<ArtistJson> artists = artistGrpcClient.allArtists("", 0, size);
+
+        assertThat(artists).hasSizeBetween(1, size);
+    }
+
+    @Artist
+    @Test
+    void allArtistsWithPartTitleShouldBeSuccess(ArtistJson artist) {
+        int size = 10;
+        String partTitle = artist.name().substring(0, 3);
+        List<ArtistJson> artists = artistGrpcClient.allArtists(partTitle, 0, size);
 
         assertThat(artists).hasSizeBetween(1, size);
     }

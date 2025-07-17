@@ -1,6 +1,7 @@
 package ru.rococo.service.impl;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.rococo.api.core.GrpcClient;
@@ -46,12 +47,12 @@ public class MuseumGrpcClient extends GrpcClient implements MuseumClient {
         return MuseumJson.fromMuseum(museumResponse);
     }
 
-    @NotNull
+    @Nullable
     @Override
     public MuseumJson getMuseumByTitle(@NotNull String name) {
         return allMuseums(name, 0, MAX_VALUE).stream()
                                              .findFirst()
-                                             .orElseThrow();
+                                             .orElse(null);
     }
 
     @NotNull

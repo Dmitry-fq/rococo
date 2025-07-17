@@ -2,7 +2,6 @@ package ru.rococo.test.api.museum;
 
 import org.junit.jupiter.api.Test;
 import ru.rococo.jupiter.annotation.ApiTest;
-import ru.rococo.jupiter.annotation.Artist;
 import ru.rococo.jupiter.annotation.Museum;
 import ru.rococo.model.MuseumJson;
 import ru.rococo.service.impl.MuseumGrpcClient;
@@ -25,11 +24,21 @@ public class AllMuseumsTest {
         assertThat(museums.getFirst()).isEqualTo(museum);
     }
 
-    @Artist
+    @Museum
     @Test
     void allMuseumsWithoutTitleShouldBeSuccess() {
         int size = 10;
         List<MuseumJson> museums = museumGrpcClient.allMuseums("", 0, size);
+
+        assertThat(museums).hasSizeBetween(1, size);
+    }
+
+    @Museum
+    @Test
+    void allMuseumsWithPartTitleShouldBeSuccess(MuseumJson museum) {
+        int size = 10;
+        String partTitle = museum.title().substring(0, 3);
+        List<MuseumJson> museums = museumGrpcClient.allMuseums(partTitle, 0, size);
 
         assertThat(museums).hasSizeBetween(1, size);
     }

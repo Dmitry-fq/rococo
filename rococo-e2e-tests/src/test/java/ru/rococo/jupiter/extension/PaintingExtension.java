@@ -50,11 +50,6 @@ public class PaintingExtension implements BeforeEachCallback, ParameterResolver 
                                      ArtistJson artistJson = getArtist(paintingAnnotation);
                                      MuseumJson museumJson = getMuseum(paintingAnnotation);
 
-//                                     ArtistJson artistJson = ArtistExtension.getArtistByNameOrCreate(
-//                                             artistClient, paintingAnnotation.artist());
-//                                     MuseumJson museumJson = MuseumExtension.getMuseumByTitleOrCreate(
-//                                             museumClient, paintingAnnotation.museum()
-//                                     );
                                      PaintingJson createdPainting = paintingClient.addPainting(
                                              PaintingJson.fromAnnotation(paintingAnnotation, artistJson, museumJson)
                                      );

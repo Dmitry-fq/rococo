@@ -54,12 +54,14 @@ public class DataUtils {
 
     @Nonnull
     public static String randomMuseumName() {
-        return faker.lorem().sentence(1, 0).replace(".", "") + " museum";
+        return faker.lorem().sentence(1, 0).replace(".", "") +
+                randomCharactersInQuantity(5) + " museum";
     }
 
     @Nonnull
     public static String randomPaintingName() {
-        return faker.lorem().sentence(1, 0).replace(".", "") + " painting";
+        return faker.lorem().sentence(1, 0).replace(".", "") +
+                randomCharactersInQuantity(5) + " painting";
     }
 
     @Nonnull
