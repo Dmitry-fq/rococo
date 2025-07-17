@@ -32,6 +32,32 @@ public class PaintingExceptionHandler {
                 .asRuntimeException(metadata);
     }
 
+    @GrpcExceptionHandler(MuseumNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public StatusRuntimeException handleMuseumNotFoundException(MuseumNotFoundException ex) {
+        Metadata metadata = new Metadata();
+        metadata.put(Metadata.Key.of("apiVersion", Metadata.ASCII_STRING_MARSHALLER), apiVersion);
+
+        LOG.error(ex.getMessage(), ex);
+
+        return Status.NOT_FOUND
+                .withDescription(ex.getMessage().replace("NOT_FOUND: ", ""))
+                .asRuntimeException(metadata);
+    }
+
+    @GrpcExceptionHandler(ArtistNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public StatusRuntimeException handleArtistNotFoundException(ArtistNotFoundException ex) {
+        Metadata metadata = new Metadata();
+        metadata.put(Metadata.Key.of("apiVersion", Metadata.ASCII_STRING_MARSHALLER), apiVersion);
+
+        LOG.error(ex.getMessage(), ex);
+
+        return Status.NOT_FOUND
+                .withDescription(ex.getMessage().replace("NOT_FOUND: ", ""))
+                .asRuntimeException(metadata);
+    }
+
     @GrpcExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public StatusRuntimeException handleIllegalArgumentException(IllegalArgumentException ex) {

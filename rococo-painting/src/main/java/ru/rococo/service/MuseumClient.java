@@ -1,5 +1,6 @@
 package ru.rococo.service;
 
+import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+import ru.rococo.ex.MuseumNotFoundException;
 import ru.rococo.grpc.Museum;
 import ru.rococo.grpc.RococoMuseumServiceGrpc;
 
@@ -28,7 +30,12 @@ public class MuseumClient {
 
         } catch (StatusRuntimeException e) {
             LOG.error("### Error while calling gRPC server ", e);
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "The gRPC operation was cancelled", e);
+
+            if (e.getStatus().getCode() == Status.NOT_FOUND.getCode()) {
+                throw new MuseumNotFoundException(e.getMessage());
+            } else {
+                throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "The gRPC operation was cancelled", e);
+            }
         }
     }
 }
