@@ -38,6 +38,21 @@ public class ArtistWebTest {
                 .checkElements()
                 .checkArtistName(artistName)
                 .checkArtistBiography(biography)
-                .checkArtistPhoto(artistImagePath);
+                .checkArtistPhoto(artistImagePath)
+                .checkPaintingListIsEmpty();
+    }
+
+    @User
+    @ApiLogin
+    @Test
+    void updateArtistShouldBeSuccess() {
+        //TODO
+    }
+
+    @User
+    @ApiLogin
+    @Test
+    void addPaintingForArtistShouldBeSuccess() {
+        //TODO
     }
 }

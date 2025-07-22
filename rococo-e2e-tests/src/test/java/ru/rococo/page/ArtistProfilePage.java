@@ -21,6 +21,12 @@ public class ArtistProfilePage extends BasePage<ArtistProfilePage> {
 
     private final SelenideElement photo = $x("//figure/img");
 
+    private final SelenideElement paintingListEmptyTitle = $x("//section/div/p");
+
+    private final SelenideElement editButton = $x("//button[contains(text(), 'Редактировать')]");
+
+    private final SelenideElement addPaintingButton = $x("//button[contains(text(), 'Добавить картину')]");
+
     private final ElementsCollection paintings = $$x("//div[@class='w-100']/ul/li");
 
     @Nonnull
@@ -65,6 +71,14 @@ public class ArtistProfilePage extends BasePage<ArtistProfilePage> {
         SelenideElement actualPaintingImg = painting.$x(".//img");
         String expectedPaintingImg = DataUtils.getImageByPathOrEmpty(imgPath);
         actualPaintingImg.shouldHave(attribute("src", expectedPaintingImg));
+
+        return this;
+    }
+
+    @Nonnull
+    @Step("Проверка что список картин художника пуст")
+    public ArtistProfilePage checkPaintingListIsEmpty() {
+        paintingListEmptyTitle.shouldHave(text("Пока что список картин этого художника пуст."));
 
         return this;
     }
