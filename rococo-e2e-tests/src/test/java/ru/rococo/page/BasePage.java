@@ -12,6 +12,8 @@ public abstract class BasePage<T extends BasePage<T>> {
 
     private static final String SESSION_COMPLETED = "Сессия завершена";
 
+    private static final String ARTIST_ADDED = "Добавлен художник: ";
+
     private final SelenideElement toast = $x("//div[@data-testid='toast']");
 
     @SuppressWarnings("unchecked")
@@ -31,9 +33,14 @@ public abstract class BasePage<T extends BasePage<T>> {
         return self();
     }
 
-    @Step("Проверка тоста")
-    private T checkToast(String elementText) {
-        toast.shouldHave(text(elementText));
+    @Step("Проверка тоста 'Добавлен художник")
+    public T checkToastArtistAdded(String artistName) {
+        checkToast(ARTIST_ADDED + artistName);
         return self();
+    }
+
+    @Step("Проверка тоста")
+    private void checkToast(String elementText) {
+        toast.shouldHave(text(elementText));
     }
 }

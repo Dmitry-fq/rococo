@@ -68,6 +68,7 @@ public class Profile {
     }
 
     @Nonnull
+    @Step("Проверка полей аватара в профиле")
     public Profile checkFieldsAndAvatar(String imgPath, String firstname, String surname) {
         checkAvatarProfile(imgPath);
         checkFirstnameInput(firstname);
@@ -77,8 +78,7 @@ public class Profile {
     }
 
     @Nonnull
-    @Step("Проверка имени")
-    public Profile checkAvatarProfile(String imgPath) {
+    private Profile checkAvatarProfile(String imgPath) {
         SelenideElement actualAvatar = avatar.$x("./img");
         String expectedAvatar = DataUtils.getImageByPathOrEmpty(imgPath);
         actualAvatar.shouldHave(attribute("src", expectedAvatar));
