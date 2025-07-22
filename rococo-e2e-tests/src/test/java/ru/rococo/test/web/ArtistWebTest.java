@@ -19,7 +19,8 @@ public class ArtistWebTest {
     @Test
     void addArtistShouldBeSuccess() {
         String artistName = DataUtils.randomArtistName();
-        String imagePath = "img/artists/botticelli.jpg";
+        String artistImagePath = "img/artists/botticelli.jpg";
+        String biography = DataUtils.randomText();
 
         Selenide.open(CFG.frontUrl(), MainPage.class)
                 .clickArtistButton()
@@ -27,12 +28,16 @@ public class ArtistWebTest {
                 .clickAddArtistButton()
                 .checkElements()
                 .setArtistNameInput(artistName)
-                .setArtistPhotoInput(imagePath)
-                .setBiographyInput(DataUtils.randomText())
+                .setArtistPhotoInput(artistImagePath)
+                .setBiographyInput(biography)
                 .clickAddButton()
                 .checkToastArtistAdded(artistName)
                 .findArtist(artistName)
-                .checkArtistNameAndPhoto(artistName, imagePath)
-                .findArtistOnPageAndClick(artistName);
+                .checkArtistNameAndPhoto(artistName, artistImagePath)
+                .findArtistOnPageAndClick(artistName)
+                .checkElements()
+                .checkArtistName(artistName)
+                .checkArtistBiography(biography)
+                .checkArtistPhoto(artistImagePath);
     }
 }

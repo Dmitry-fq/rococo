@@ -46,8 +46,9 @@ public class ArtistPage extends BasePage<ArtistPage> {
     }
 
     @Step("Войти в профиль художника по имени")
-    public void findArtistOnPageAndClick(String artistName) {
+    public ArtistProfilePage findArtistOnPageAndClick(String artistName) {
         artists.findBy(text(artistName)).click();
+        return new ArtistProfilePage();
     }
 
     @Step("Проверить имя и фото художника")
