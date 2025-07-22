@@ -2,8 +2,6 @@ package ru.rococo.service;
 
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +21,6 @@ import java.util.UUID;
 
 @GrpcService
 public class PaintingService extends RococoPaintingServiceGrpc.RococoPaintingServiceImplBase {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PaintingService.class);
 
     private final PaintingRepository paintingRepository;
 
@@ -99,13 +95,12 @@ public class PaintingService extends RococoPaintingServiceGrpc.RococoPaintingSer
                                                           );
 
         updatePaintingEntityFromRequest(paintingEntity, paintingRequest);
-
-        paintingRepository.save(paintingEntity);
-
         Painting painting = paintingEntity.toPainting(
                 getArtistById(String.valueOf(paintingEntity.getArtistId())),
                 getMuseumById(String.valueOf(paintingEntity.getMuseumId()))
         );
+        paintingRepository.save(paintingEntity);
+
         responseObserver.onNext(painting);
         responseObserver.onCompleted();
     }
@@ -115,12 +110,12 @@ public class PaintingService extends RococoPaintingServiceGrpc.RococoPaintingSer
         PaintingEntity paintingEntity = new PaintingEntity();
         updatePaintingEntityFromRequest(paintingEntity, paintingRequest);
 
+        Artist artist = getArtistById(String.valueOf(paintingEntity.getArtistId()));
+        Museum museum = getMuseumById(String.valueOf(paintingEntity.getMuseumId()));
+
         paintingRepository.save(paintingEntity);
 
-        Painting painting = paintingEntity.toPainting(
-                getArtistById(String.valueOf(paintingEntity.getArtistId())),
-                getMuseumById(String.valueOf(paintingEntity.getMuseumId()))
-        );
+        Painting painting = paintingEntity.toPainting(artist, museum);
         responseObserver.onNext(painting);
         responseObserver.onCompleted();
     }
