@@ -45,7 +45,7 @@ public class ArtistWebTest {
     @User
     @ApiLogin
     @Test
-    void updateArtistShouldBeSuccess() {
+    void editArtistShouldBeSuccess() {
         //TODO
     }
 

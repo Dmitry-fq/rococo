@@ -20,10 +20,20 @@ public class PaintingWebTest {
     @Artist
     @Museum
     @Test
-    void paintingShouldBeAdded() {
+    void addPaintingShouldBeSuccess() {
         Selenide.open(CFG.frontUrl(), Header.class)
                 .clickPaintingButton()
                 .checkElements()
                 .clickAddPainting();
+        //TODO
+    }
+
+    @User
+    @ApiLogin
+    @Artist
+    @Museum
+    @Test
+    void editPaintingShouldBeSuccess() {
+        //TODO
     }
 }
