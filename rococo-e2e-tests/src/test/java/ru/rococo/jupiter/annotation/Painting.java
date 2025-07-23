@@ -13,7 +13,7 @@ public @interface Painting {
 
     Museum[] museum() default {};
 
-    String imagePath() default "";
+    String imagePath() default "img/paintings/mona_lisa.jpg";
 
     String title() default "";
 

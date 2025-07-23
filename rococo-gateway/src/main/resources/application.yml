@@ -40,15 +40,18 @@ grpc:
     artistClient:
       address: 'static://localhost:8094'
       negotiationType: PLAINTEXT
+      max-inbound-message-size: 104857600 # 100MB
     geoClient:
       address: 'static://localhost:8096'
       negotiationType: PLAINTEXT
     museumClient:
       address: 'static://localhost:8098'
       negotiationType: PLAINTEXT
+      max-inbound-message-size: 104857600 # 100MB
     paintingClient:
       address: 'static://localhost:8100'
       negotiationType: PLAINTEXT
+      max-inbound-message-size: 104857600 # 100MB
 
 rococo-front:
   base-uri: 'http://127.0.0.1:3000'

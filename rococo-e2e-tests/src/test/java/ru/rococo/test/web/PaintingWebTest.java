@@ -59,4 +59,18 @@ public class PaintingWebTest {
     void editPaintingShouldBeSuccess() {
         //TODO
     }
+
+    @User
+    @ApiLogin
+    @Artist
+    @Museum
+    @Test
+    void addPaintingWithIncorrectFieldShouldBeFail() {
+        //TODO
+    }
+
+    @Test
+    void paintingShouldBeNotFound() {
+        //TODO
+    }
 }

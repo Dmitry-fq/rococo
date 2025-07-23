@@ -7,6 +7,8 @@ api:
 grpc:
   server:
     port: 8100
+    max-inbound-message-size: 104857600 # 100MB
+
   client:
     artistClient:
       address: 'static://localhost:8094'

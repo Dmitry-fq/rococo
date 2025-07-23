@@ -55,4 +55,9 @@ public class ArtistWebTest {
     void addPaintingForArtistShouldBeSuccess() {
         //TODO
     }
+
+    @Test
+    void artistShouldBeNotFound() {
+        //TODO
+    }
 }

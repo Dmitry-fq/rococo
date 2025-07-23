@@ -67,7 +67,7 @@ public class PaintingExtension implements BeforeEachCallback, ParameterResolver 
                             null,
                             DataUtils.randomArtistName(),
                             DataUtils.randomText(),
-                            ""
+                            DataUtils.getImageByPathOrEmpty("img/artists/botticelli.jpg")
                     )
             );
         }
@@ -82,7 +82,7 @@ public class PaintingExtension implements BeforeEachCallback, ParameterResolver 
                             null,
                             DataUtils.randomMuseumName(),
                             DataUtils.randomText(),
-                            "",
+                            DataUtils.getImageByPathOrEmpty("img/museums/hermitage.jpg"),
                             new GeoJson(
                                     new CountryJson(
                                             null,

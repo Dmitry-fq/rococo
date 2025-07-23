@@ -21,7 +21,7 @@ public class MuseumWebTest {
         String museumTitle = DataUtils.randomArtistName();
         String country = DataUtils.defaultCountryName();
         String city = DataUtils.randomCityName();
-        String museumImagePath = "img/artists/botticelli.jpg";
+        String museumImagePath = "img/museums/hermitage.jpg";
         String description = DataUtils.randomText();
 
         Selenide.open(CFG.frontUrl(), MainPage.class)
@@ -55,6 +55,11 @@ public class MuseumWebTest {
     @ApiLogin
     @Test
     void addMuseumWithIncorrectFieldShouldBeFail() {
+        //TODO
+    }
+
+    @Test
+    void museumShouldBeNotFound() {
         //TODO
     }
 }

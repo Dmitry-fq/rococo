@@ -13,9 +13,9 @@ public @interface Museum {
     String description() default "";
 
     /**
-     * Путь до изображения от /resource . Например: img/museums/louvre.jpg
+     * Путь до изображения от /resource. Например: img/museums/louvre.jpg
      */
-    String photoPath() default "";
+    String photoPath() default "img/museums/louvre.jpg";
 
     /**
      * Нужно передавать название страны из БД rococo-geo таблицы country или оставить пустым

@@ -39,16 +39,6 @@ public class ArtistExtension implements BeforeEachCallback, ParameterResolver {
                 artistClient.addArtist(ArtistJson.fromAnnotation(artistAnnotation)));
     }
 
-//    public static ArtistJson getArtistByNameOrCreate(ArtistClient artistClient, Artist[] artistAnnotation) {
-//        ArtistJson artistJson = null;
-//        if (artistAnnotation.length != 0) {
-//            artistJson = artistClient.getArtistByName(artistAnnotation[0].name());
-//        }
-//
-//        return Objects.requireNonNullElseGet(artistJson, () ->
-//                artistClient.addArtist(ArtistJson.fromAnnotation(artistAnnotation[0])));
-//    }
-
     @Override
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Artist.class)

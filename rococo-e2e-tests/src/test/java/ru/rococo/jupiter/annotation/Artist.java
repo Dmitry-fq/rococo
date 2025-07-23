@@ -13,7 +13,7 @@ public @interface Artist {
     String biography() default "";
 
     /**
-     * Путь до изображения от /resource . Например: img/artists/botticelli.jpg
+     * Путь до изображения от /resource. Например: img/artists/botticelli.jpg
      */
-    String photoPath() default "";
+    String photoPath() default "img/artists/botticelli.jpg";
 }
