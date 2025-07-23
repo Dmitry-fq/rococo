@@ -75,7 +75,7 @@ public class NewMuseum {
     }
 
     @Nonnull
-    @Step("Установка случайной страны музея")
+    @Step("Установка страны музея")
     public NewMuseum setCountry(String countryName) {
         countries.findBy(text(countryName))
                  .click();

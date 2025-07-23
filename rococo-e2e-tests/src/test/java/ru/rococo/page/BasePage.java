@@ -16,6 +16,8 @@ public abstract class BasePage<T extends BasePage<T>> {
 
     private static final String MUSEUM_ADDED = "Добавлен музей: ";
 
+    private static final String PAINTING_ADDED = "Добавлена картина: ";
+
     private final SelenideElement toast = $x("//div[@data-testid='toast']");
 
     @SuppressWarnings("unchecked")
@@ -44,6 +46,12 @@ public abstract class BasePage<T extends BasePage<T>> {
     @Step("Проверка тоста 'Добавлен музей")
     public T checkToastMuseumAdded(String museumTitle) {
         checkToast(MUSEUM_ADDED + museumTitle);
+        return self();
+    }
+
+    @Step("Проверка тоста 'Добавлена картина")
+    public T checkToastPaintingAdded(String paintingTitle) {
+        checkToast(PAINTING_ADDED + paintingTitle);
         return self();
     }
 
